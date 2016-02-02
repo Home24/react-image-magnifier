@@ -17,13 +17,13 @@ var App = React.createClass({
                         height: 300
                     }}
                     zoomImage={{
-                        src: 'img/cat-large.jpg',
-                        width: 1024,
-                        height: 768
+                        src: 'img/beach-large.jpg',
+                        width: 1600,
+                        height: 1200
                     }}
-                    previewWidth={500}
+                    previewWidth={800}
                 >
-                    <img src="img/cat-small.jpg" alt=""/>
+                    <img src="img/beach-small.jpg" alt=""/>
                 </ImageMagnifier>
             </div>
         );
