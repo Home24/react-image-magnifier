@@ -1,5 +1,5 @@
 import React from 'react';
-import assign from 'object-assign';
+import assign from 'lodash/assign';
 
 export default React.createClass({
 

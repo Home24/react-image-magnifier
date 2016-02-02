@@ -4,6 +4,7 @@
   "description": "HOME24 fork. A react component that accepts a high-res source image and produces a magnifier window on mouse hover over the part of the image the cursor is over",
   "main": "index.js",
   "scripts": {
+    "build": "webpack  --verbose --colors --display-error-details --config webpack.config.js",
     "example": "webpack-dev-server --watch-poll 500 --content-base src"
   },
   "repository": {
@@ -19,6 +20,7 @@
   "author": "Leland Richardson",
   "license": "MIT",
   "dependencies": {
+    "lodash": "^4.2.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7"
   },

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import assign from 'object-assign';
+import assign from 'lodash/assign';
 import Magnifier from './magnifier';
 
 function getOffset(el) {
