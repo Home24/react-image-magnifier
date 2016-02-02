@@ -1,0 +1,43 @@
+{
+    "rules": {
+        "indent": [ 2, 4, { "SwitchCase": 1 }],
+        "max-len": [ 1 ],
+        "arrow-body-style": [ 2, "as-needed" ],
+        "react/prefer-es6-class": [ 0 ],
+        "prefer-template": [ 1 ],
+        "prefer-arrow-callback": [ 1 ],
+        "react/jsx-indent-props": [ 2, 4 ],
+        "linebreak-style": [ 2, "unix" ],
+        "semi": [ 2, "always"],
+        "no-use-before-define": [2, "nofunc"],
+        "strict": [2, "global"],
+        "no-var": [ 0 ],
+        "comma-dangle": [ 0 ],
+        "func-names": [ 0 ],
+        "object-shorthand": [ 0 ],
+        "no-trailing-spaces": [ 0 ],
+        "padded-blocks": [ 0 ],
+        "vars-on-top": [ 1 ],
+        "new-cap":  [2, {"capIsNewExceptions": ["express.Router"]} ],
+        "no-param-reassign": [ 2, { "props": false } ],
+        "valid-jsdoc": [
+          2,
+          {
+            "prefer": {
+              "return": "returns"
+            },
+            "requireReturnDescription": false
+          }
+        ]
+    },
+    "env": {
+        "es6": true,
+        "node": true,
+        "mocha": true
+    },
+    "globals": {
+        "sinon": false,
+        "__LOCALE__": false
+    },
+    "extends": "airbnb"
+}

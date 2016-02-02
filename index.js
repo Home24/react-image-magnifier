@@ -1,1 +1,1 @@
-module.exports = require('./src/ImageMagnifier');
+module.exports = require('./src/image-magnifier');

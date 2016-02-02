@@ -4,32 +4,22 @@ var webpack = require('webpack');
 module.exports = {
     cache: true,
     entry: {
-        App: './src/App'
+        app: path.join(__dirname, 'example', 'src', 'app.js')
     },
     output: {
-        path: path.join(__dirname, 'example'),
+        path: path.join(__dirname, 'example', 'build'),
         publicPath: 'example',
         filename: '[name].js'
     },
     module: {
         loaders: [
             {
-                test: /\.jsx?$/,
+                test: /\.js?$/,
                 exclude: /node_modules/,
-                loader: 'babel',
-                query: {
-                    optional: [
-                        'runtime',
-                        'minification.propertyLiterals'
-                    ]
-                }
+                loader: 'babel?presets[]=react,presets[]=es2015'
             }
         ],
         noParse: /\.min\.js/
-    },
-    resolve: {
-        modulesDirectories: ['src/Components', 'src/Views', 'src/Styles', 'node_modules'],
-        extensions: ['', '.js', '.jsx', '.json']
     },
     plugins: [
         new webpack.NoErrorsPlugin()
