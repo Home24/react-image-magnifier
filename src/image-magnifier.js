@@ -31,7 +31,11 @@ export default React.createClass({
             y: React.PropTypes.number.isRequired
         }),
 
-        // the size of the zoomed-in image
+        smallImage: React.PropTypes.shape({
+            width: React.PropTypes.number.isRequired,
+            height: React.PropTypes.number.isRequired
+        }).isRequired,
+
         zoomImage: React.PropTypes.shape({
             offset: React.PropTypes.shape({
                 x: React.PropTypes.number,
@@ -101,8 +105,8 @@ export default React.createClass({
     portalElement: null,
 
     renderMagnifier(zoomImage) {
-        const { left, top, right, bottom, width, height } = ReactDOM.findDOMNode(this).getBoundingClientRect();
-        const smallImage = { left, top, right, bottom, width, height };
+        const { left, top, right, bottom } = ReactDOM.findDOMNode(this).getBoundingClientRect();
+        const smallImage = assign(this.props.smallImage, { left, top, right, bottom });
 
         ReactDOM.render(
             <Magnifier

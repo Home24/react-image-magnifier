@@ -53,7 +53,11 @@ exports.default = _react2.default.createClass({
             y: _react2.default.PropTypes.number.isRequired
         }),
 
-        // the size of the zoomed-in image
+        smallImage: _react2.default.PropTypes.shape({
+            width: _react2.default.PropTypes.number.isRequired,
+            height: _react2.default.PropTypes.number.isRequired
+        }).isRequired,
+
         zoomImage: _react2.default.PropTypes.shape({
             offset: _react2.default.PropTypes.shape({
                 x: _react2.default.PropTypes.number,
@@ -126,10 +130,8 @@ exports.default = _react2.default.createClass({
         var top = _ReactDOM$findDOMNode.top;
         var right = _ReactDOM$findDOMNode.right;
         var bottom = _ReactDOM$findDOMNode.bottom;
-        var width = _ReactDOM$findDOMNode.width;
-        var height = _ReactDOM$findDOMNode.height;
 
-        var smallImage = { left: left, top: top, right: right, bottom: bottom, width: width, height: height };
+        var smallImage = (0, _assign2.default)(this.props.smallImage, { left: left, top: top, right: right, bottom: bottom });
 
         _reactDom2.default.render(_react2.default.createElement(_magnifier2.default, _extends({
             previewWidth: this.props.previewWidth,
