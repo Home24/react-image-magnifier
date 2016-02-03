@@ -2,14 +2,14 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    cache: true,
+    devtool: 'source-map',
     entry: {
-        app: path.join(__dirname, 'example', 'src', 'app.js')
+        'image-magnifier': path.join(__dirname, 'src/image-magnifier.js')
     },
     output: {
-        path: path.join(__dirname, 'example', 'build'),
-        publicPath: 'example',
-        filename: '[name].js'
+        path: path.join(__dirname, 'build'),
+        publicPath: 'dist',
+        filename: '[name].min.js'
     },
     module: {
         loaders: [
@@ -22,6 +22,15 @@ module.exports = {
         noParse: /\.min\.js/
     },
     plugins: [
-        new webpack.NoErrorsPlugin()
-    ]
+        new webpack.NoErrorsPlugin(),
+        new webpack.optimize.OccurenceOrderPlugin(),
+        // optimizations
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        })
+    ],
+    externals: ['react', 'react-dom']
 };
