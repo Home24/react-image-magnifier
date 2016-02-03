@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import assign from 'lodash/assign';
+import omit from 'lodash/omit';
 import Magnifier from './magnifier';
 
 function getOffset(el) {
@@ -32,8 +33,8 @@ export default React.createClass({
         }),
 
         smallImage: React.PropTypes.shape({
-            width: React.PropTypes.number.isRequired,
-            height: React.PropTypes.number.isRequired
+            src: React.PropTypes.string.isRequired,
+            alt: React.PropTypes.string.isRequired
         }).isRequired,
 
         zoomImage: React.PropTypes.shape({
@@ -57,37 +58,41 @@ export default React.createClass({
             x: 0,
             y: 0,
             offsetX: -1,
-            offsetY: -1
+            offsetY: -1,
+            zoomImage: {
+                width: 0,
+                height: 0
+            }
         };
     },
 
     componentDidMount() {
-        document.addEventListener('mousemove', this.onMouseMove);
         if (!this.portalElement) {
             this.portalElement = document.createElement('div');
             document.body.appendChild(this.portalElement);
         }
-        this.componentDidUpdate(this.props);
+
+        this.loadImage(() => {
+            document.addEventListener('mousemove', this.onMouseMove);
+        });
     },
 
-    componentDidUpdate(prevProps) {
-        const zoomImage = assign(this.props.zoomImage);
+    componentDidUpdate() {
+        const { left, top, right, bottom, width, height } = ReactDOM.findDOMNode(this).getBoundingClientRect();
+        const { zoomImage, previewWidth, cursorOffset } = this.props;
 
-        if (prevProps.zoomImage.src !== this.props.zoomImage.src) {
-            this.removeMagnifier();
-        }
+        const smallImage = { left, top, right, bottom, width, height };
+        const zoomImageExtended = assign({}, zoomImage, this.state.zoomImage);
 
-        const img = new Image();
-        
-        img.onload = (event) => {
-            const image = event.currentTarget;
-            zoomImage.width = image.width;
-            zoomImage.height = image.height;
-
-            this.renderMagnifier(zoomImage);
-        };
-
-        img.src = zoomImage.src;
+        ReactDOM.render(
+            <Magnifier
+                previewWidth={previewWidth}
+                smallImage={smallImage}
+                zoomImage={zoomImageExtended}
+                cursorOffset={cursorOffset}
+                {...omit(this.state, 'zoomImage')}
+            />,
+            this.portalElement);
     },
 
     componentWillUnmount() {
@@ -106,28 +111,29 @@ export default React.createClass({
         });
     },
 
-    portalElement: null,
+    loadImage(callback) {
+        const zoomImage = assign(this.props.zoomImage);
+        const img = new Image();
 
-    renderMagnifier(zoomImage) {
-        const { left, top, right, bottom } = ReactDOM.findDOMNode(this).getBoundingClientRect();
-        const smallImage = assign(this.props.smallImage, { left, top, right, bottom });
+        img.onload = (event) => {
+            const { width, height } = event.currentTarget;
 
-        ReactDOM.render(
-            <Magnifier
-                previewWidth={this.props.previewWidth}
-                smallImage={smallImage}
-                zoomImage={zoomImage}
-                cursorOffset={this.props.cursorOffset}
-                {...this.state}
-            />,
-            this.portalElement);
+            this.setState({ zoomImage: { width, height } });
+            callback();
+        };
+
+        img.src = zoomImage.src;
     },
+
+    portalElement: null,
 
     removeMagnifier() {
         this.portalElement.innerHTML = '';
     },
 
     render() {
-        return this.props.children;
+        const { smallImage } = this.props;
+
+        return <img src={smallImage.src} alt={smallImage.alt} />
     }
 });

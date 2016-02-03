@@ -18,6 +18,10 @@ var _assign = require('lodash/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
 
+var _omit = require('lodash/omit');
+
+var _omit2 = _interopRequireDefault(_omit);
+
 var _magnifier = require('./magnifier');
 
 var _magnifier2 = _interopRequireDefault(_magnifier);
@@ -54,8 +58,8 @@ exports.default = _react2.default.createClass({
         }),
 
         smallImage: _react2.default.PropTypes.shape({
-            width: _react2.default.PropTypes.number.isRequired,
-            height: _react2.default.PropTypes.number.isRequired
+            src: _react2.default.PropTypes.string.isRequired,
+            alt: _react2.default.PropTypes.string.isRequired
         }).isRequired,
 
         zoomImage: _react2.default.PropTypes.shape({
@@ -78,37 +82,48 @@ exports.default = _react2.default.createClass({
             x: 0,
             y: 0,
             offsetX: -1,
-            offsetY: -1
+            offsetY: -1,
+            zoomImage: {
+                width: 0,
+                height: 0
+            }
         };
     },
     componentDidMount: function componentDidMount() {
-        document.addEventListener('mousemove', this.onMouseMove);
+        var _this = this;
+
         if (!this.portalElement) {
             this.portalElement = document.createElement('div');
             document.body.appendChild(this.portalElement);
         }
-        this.componentDidUpdate(this.props);
+
+        this.loadImage(function () {
+            document.addEventListener('mousemove', _this.onMouseMove);
+        });
     },
-    componentDidUpdate: function componentDidUpdate(prevProps) {
-        var _this = this;
+    componentDidUpdate: function componentDidUpdate() {
+        var _ReactDOM$findDOMNode = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
 
-        var zoomImage = (0, _assign2.default)(this.props.zoomImage);
+        var left = _ReactDOM$findDOMNode.left;
+        var top = _ReactDOM$findDOMNode.top;
+        var right = _ReactDOM$findDOMNode.right;
+        var bottom = _ReactDOM$findDOMNode.bottom;
+        var width = _ReactDOM$findDOMNode.width;
+        var height = _ReactDOM$findDOMNode.height;
+        var _props = this.props;
+        var zoomImage = _props.zoomImage;
+        var previewWidth = _props.previewWidth;
+        var cursorOffset = _props.cursorOffset;
 
-        if (prevProps.zoomImage.src !== this.props.zoomImage.src) {
-            this.removeMagnifier();
-        }
+        var smallImage = { left: left, top: top, right: right, bottom: bottom, width: width, height: height };
+        var zoomImageExtended = (0, _assign2.default)({}, zoomImage, this.state.zoomImage);
 
-        var img = new Image();
-
-        img.onload = function (event) {
-            var image = event.currentTarget;
-            zoomImage.width = image.width;
-            zoomImage.height = image.height;
-
-            _this.renderMagnifier(zoomImage);
-        };
-
-        img.src = zoomImage.src;
+        _reactDom2.default.render(_react2.default.createElement(_magnifier2.default, _extends({
+            previewWidth: previewWidth,
+            smallImage: smallImage,
+            zoomImage: zoomImageExtended,
+            cursorOffset: cursorOffset
+        }, (0, _omit2.default)(this.state, 'zoomImage'))), this.portalElement);
     },
     componentWillUnmount: function componentWillUnmount() {
         document.removeEventListener('mousemove', this.onMouseMove);
@@ -124,30 +139,32 @@ exports.default = _react2.default.createClass({
             offsetY: e.y - offset.y
         });
     },
+    loadImage: function loadImage(callback) {
+        var _this2 = this;
+
+        var zoomImage = (0, _assign2.default)(this.props.zoomImage);
+        var img = new Image();
+
+        img.onload = function (event) {
+            var _event$currentTarget = event.currentTarget;
+            var width = _event$currentTarget.width;
+            var height = _event$currentTarget.height;
+
+            _this2.setState({ zoomImage: { width: width, height: height } });
+            callback();
+        };
+
+        img.src = zoomImage.src;
+    },
 
     portalElement: null,
 
-    renderMagnifier: function renderMagnifier(zoomImage) {
-        var _ReactDOM$findDOMNode = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
-
-        var left = _ReactDOM$findDOMNode.left;
-        var top = _ReactDOM$findDOMNode.top;
-        var right = _ReactDOM$findDOMNode.right;
-        var bottom = _ReactDOM$findDOMNode.bottom;
-
-        var smallImage = (0, _assign2.default)(this.props.smallImage, { left: left, top: top, right: right, bottom: bottom });
-
-        _reactDom2.default.render(_react2.default.createElement(_magnifier2.default, _extends({
-            previewWidth: this.props.previewWidth,
-            smallImage: smallImage,
-            zoomImage: zoomImage,
-            cursorOffset: this.props.cursorOffset
-        }, this.state)), this.portalElement);
-    },
     removeMagnifier: function removeMagnifier() {
         this.portalElement.innerHTML = '';
     },
     render: function render() {
-        return this.props.children;
+        var smallImage = this.props.smallImage;
+
+        return _react2.default.createElement('img', { src: smallImage.src, alt: smallImage.alt });
     }
 });

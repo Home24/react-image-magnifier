@@ -11,9 +11,7 @@ var App = React.createClass({
     render() {
         return (
             <div>
-                <ImageMagnifier zoomImage={{ src: 'img/bed-large.jpg', offset: { x: 0, y: 0 } }} smallImage={{ width: 400, height: 400 }} previewWidth={900} >
-                    <img src="img/bed-small.jpg" alt=""/>
-                </ImageMagnifier>
+                <ImageMagnifier smallImage={{ src: 'img/bed-small.jpg', alt: '123' }} zoomImage={{ src: 'img/bed-large.jpg', offset: { x: 0, y: 0 } }} previewWidth={900} />
             </div>
         );
     }
