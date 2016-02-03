@@ -68,7 +68,6 @@ export default React.createClass({
 
     componentDidUpdate() {
         const zoomImage = assign(this.props.zoomImage);
-        console.log(zoomImage);
 
         const img = new Image();
         
