@@ -89,7 +89,6 @@ exports.default = _react2.default.createClass({
         var _this = this;
 
         var zoomImage = (0, _assign2.default)(this.props.zoomImage);
-        console.log(zoomImage);
 
         var img = new Image();
 
