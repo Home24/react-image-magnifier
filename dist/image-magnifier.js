@@ -53,17 +53,13 @@ exports.default = _react2.default.createClass({
             y: _react2.default.PropTypes.number.isRequired
         }),
 
-        // the size of the non-zoomed-in image
-        smallImage: _react2.default.PropTypes.shape({
-            width: _react2.default.PropTypes.number.isRequired,
-            height: _react2.default.PropTypes.number.isRequired
-        }).isRequired,
-
         // the size of the zoomed-in image
         zoomImage: _react2.default.PropTypes.shape({
-            src: _react2.default.PropTypes.string.isRequired,
-            width: _react2.default.PropTypes.number.isRequired,
-            height: _react2.default.PropTypes.number.isRequired
+            offset: _react2.default.PropTypes.shape({
+                x: _react2.default.PropTypes.number,
+                y: _react2.default.PropTypes.number
+            }),
+            src: _react2.default.PropTypes.string.isRequired
         }).isRequired
     },
 
@@ -90,21 +86,22 @@ exports.default = _react2.default.createClass({
         this.componentDidUpdate();
     },
     componentDidUpdate: function componentDidUpdate() {
-        var _ReactDOM$findDOMNode = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
+        var _this = this;
 
-        var left = _ReactDOM$findDOMNode.left;
-        var top = _ReactDOM$findDOMNode.top;
-        var right = _ReactDOM$findDOMNode.right;
-        var bottom = _ReactDOM$findDOMNode.bottom;
+        var zoomImage = (0, _assign2.default)(this.props.zoomImage);
+        console.log(zoomImage);
 
-        var smallImage = (0, _assign2.default)(this.props.smallImage, { left: left, top: top, right: right, bottom: bottom });
+        var img = new Image();
 
-        _reactDom2.default.render(_react2.default.createElement(_magnifier2.default, _extends({
-            previewWidth: this.props.previewWidth,
-            smallImage: smallImage,
-            zoomImage: this.props.zoomImage,
-            cursorOffset: this.props.cursorOffset
-        }, this.state)), this.portalElement);
+        img.onload = function (event) {
+            var image = event.currentTarget;
+            zoomImage.width = image.width;
+            zoomImage.height = image.height;
+
+            _this.renderMagnifier(zoomImage);
+        };
+
+        img.src = zoomImage.src;
     },
     componentWillUnmount: function componentWillUnmount() {
         document.removeEventListener('mousemove', this.onMouseMove);
@@ -123,6 +120,25 @@ exports.default = _react2.default.createClass({
 
     portalElement: null,
 
+    renderMagnifier: function renderMagnifier(zoomImage) {
+        var _ReactDOM$findDOMNode = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
+
+        var left = _ReactDOM$findDOMNode.left;
+        var top = _ReactDOM$findDOMNode.top;
+        var right = _ReactDOM$findDOMNode.right;
+        var bottom = _ReactDOM$findDOMNode.bottom;
+        var width = _ReactDOM$findDOMNode.width;
+        var height = _ReactDOM$findDOMNode.height;
+
+        var smallImage = { left: left, top: top, right: right, bottom: bottom, width: width, height: height };
+
+        _reactDom2.default.render(_react2.default.createElement(_magnifier2.default, _extends({
+            previewWidth: this.props.previewWidth,
+            smallImage: smallImage,
+            zoomImage: zoomImage,
+            cursorOffset: this.props.cursorOffset
+        }, this.state)), this.portalElement);
+    },
     render: function render() {
         return this.props.children;
     }

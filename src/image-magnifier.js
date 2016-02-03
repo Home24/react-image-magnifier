@@ -31,17 +31,13 @@ export default React.createClass({
             y: React.PropTypes.number.isRequired
         }),
 
-        // the size of the non-zoomed-in image
-        smallImage: React.PropTypes.shape({
-            width: React.PropTypes.number.isRequired,
-            height: React.PropTypes.number.isRequired
-        }).isRequired,
-
         // the size of the zoomed-in image
         zoomImage: React.PropTypes.shape({
-            src: React.PropTypes.string.isRequired,
-            width: React.PropTypes.number.isRequired,
-            height: React.PropTypes.number.isRequired
+            offset: React.PropTypes.shape({
+                x: React.PropTypes.number,
+                y: React.PropTypes.number
+            }),
+            src: React.PropTypes.string.isRequired
         }).isRequired
     },
 
@@ -71,18 +67,20 @@ export default React.createClass({
     },
 
     componentDidUpdate() {
-        const { left, top, right, bottom } = ReactDOM.findDOMNode(this).getBoundingClientRect();
-        const smallImage = assign(this.props.smallImage, { left, top, right, bottom });
+        const zoomImage = assign(this.props.zoomImage);
+        console.log(zoomImage);
 
-        ReactDOM.render(
-            <Magnifier
-                previewWidth={this.props.previewWidth}
-                smallImage={smallImage}
-                zoomImage={this.props.zoomImage}
-                cursorOffset={this.props.cursorOffset}
-                {...this.state}
-            />,
-            this.portalElement);
+        const img = new Image();
+        
+        img.onload = (event) => {
+            const image = event.currentTarget;
+            zoomImage.width = image.width;
+            zoomImage.height = image.height;
+
+            this.renderMagnifier(zoomImage);
+        };
+
+        img.src = zoomImage.src;
     },
 
     componentWillUnmount() {
@@ -102,6 +100,21 @@ export default React.createClass({
     },
 
     portalElement: null,
+
+    renderMagnifier(zoomImage) {
+        const { left, top, right, bottom, width, height } = ReactDOM.findDOMNode(this).getBoundingClientRect();
+        const smallImage = { left, top, right, bottom, width, height };
+
+        ReactDOM.render(
+            <Magnifier
+                previewWidth={this.props.previewWidth}
+                smallImage={smallImage}
+                zoomImage={zoomImage}
+                cursorOffset={this.props.cursorOffset}
+                {...this.state}
+            />,
+            this.portalElement);
+    },
 
     render() {
         return this.props.children;

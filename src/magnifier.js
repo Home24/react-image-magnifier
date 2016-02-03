@@ -40,7 +40,11 @@ export default React.createClass({
         zoomImage: React.PropTypes.shape({
             src: React.PropTypes.string.isRequired,
             width: React.PropTypes.number.isRequired,
-            height: React.PropTypes.number.isRequired
+            height: React.PropTypes.number.isRequired,
+            offset: React.PropTypes.shape({
+                x: React.PropTypes.number,
+                y: React.PropTypes.number
+            })
         }).isRequired
     },
 
@@ -69,10 +73,6 @@ export default React.createClass({
             offsetX < smallImage.width &&
             offsetY > 0 &&
             offsetX > 0;
-
-        if (!isVisible) {
-            return null;
-        }
 
         // TODO cursor offset support
 
@@ -120,6 +120,7 @@ export default React.createClass({
 
         const rectangleStyles = {
             position: 'absolute',
+            display: isVisible ? 'block' : 'none',
             width: rectangleSizeX,
             height: rectangleSizeY,
             border: '2px solid grey',
@@ -128,8 +129,9 @@ export default React.createClass({
 
         const previewStyles = {
             position: 'absolute',
-            left: smallImage.right,
-            top: smallImage.top,
+            display: isVisible ? 'block' : 'none',
+            left: (zoomImage.offset && zoomImage.offset.x) ? (smallImage.right + zoomImage.offset.x) : smallImage.right,
+            top: (zoomImage.offset && zoomImage.offset.y) ? (smallImage.top + zoomImage.offset.y) : smallImage.top,
             width: previewSizeX,
             height: previewSizeY,
             backgroundImage: `url(${zoomImage.src})`,

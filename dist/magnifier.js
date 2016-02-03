@@ -54,7 +54,11 @@ exports.default = _react2.default.createClass({
         zoomImage: _react2.default.PropTypes.shape({
             src: _react2.default.PropTypes.string.isRequired,
             width: _react2.default.PropTypes.number.isRequired,
-            height: _react2.default.PropTypes.number.isRequired
+            height: _react2.default.PropTypes.number.isRequired,
+            offset: _react2.default.PropTypes.shape({
+                x: _react2.default.PropTypes.number,
+                y: _react2.default.PropTypes.number
+            })
         }).isRequired
     },
 
@@ -87,10 +91,6 @@ exports.default = _react2.default.createClass({
         var previewDiffX = previewSizeX / rectangleSizeX;
 
         var isVisible = offsetY < smallImage.height && offsetX < smallImage.width && offsetY > 0 && offsetX > 0;
-
-        if (!isVisible) {
-            return null;
-        }
 
         // TODO cursor offset support
 
@@ -139,6 +139,7 @@ exports.default = _react2.default.createClass({
 
         var rectangleStyles = {
             position: 'absolute',
+            display: isVisible ? 'block' : 'none',
             width: rectangleSizeX,
             height: rectangleSizeY,
             border: '2px solid grey',
@@ -147,8 +148,9 @@ exports.default = _react2.default.createClass({
 
         var previewStyles = {
             position: 'absolute',
-            left: smallImage.right,
-            top: smallImage.top,
+            display: isVisible ? 'block' : 'none',
+            left: zoomImage.offset && zoomImage.offset.x ? smallImage.right + zoomImage.offset.x : smallImage.right,
+            top: zoomImage.offset && zoomImage.offset.y ? smallImage.top + zoomImage.offset.y : smallImage.top,
             width: previewSizeX,
             height: previewSizeY,
             backgroundImage: 'url(' + zoomImage.src + ')',

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack  --verbose --colors --display-error-details --config webpack.config.js",
     "transpile": "babel src/ --ignore node_modules -d dist/",
-    "example": "webpack-dev-server --watch-poll 500 --content-base src"
+    "example": "webpack-dev-server --watch-poll 500 --content-base src --config webpack.example.config.js"
   },
   "repository": {
     "type": "git",
