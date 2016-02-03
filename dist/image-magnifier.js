@@ -87,12 +87,16 @@ exports.default = _react2.default.createClass({
             this.portalElement = document.createElement('div');
             document.body.appendChild(this.portalElement);
         }
-        this.componentDidUpdate();
+        this.componentDidUpdate(this.props);
     },
-    componentDidUpdate: function componentDidUpdate() {
+    componentDidUpdate: function componentDidUpdate(prevProps) {
         var _this = this;
 
         var zoomImage = (0, _assign2.default)(this.props.zoomImage);
+
+        if (prevProps.zoomImage.src !== this.props.zoomImage.src) {
+            this.removeMagnifier();
+        }
 
         var img = new Image();
 
@@ -139,6 +143,9 @@ exports.default = _react2.default.createClass({
             zoomImage: zoomImage,
             cursorOffset: this.props.cursorOffset
         }, this.state)), this.portalElement);
+    },
+    removeMagnifier: function removeMagnifier() {
+        this.portalElement.innerHTML = '';
     },
     render: function render() {
         return this.props.children;
