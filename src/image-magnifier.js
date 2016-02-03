@@ -67,11 +67,15 @@ export default React.createClass({
             this.portalElement = document.createElement('div');
             document.body.appendChild(this.portalElement);
         }
-        this.componentDidUpdate();
+        this.componentDidUpdate(this.props);
     },
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         const zoomImage = assign(this.props.zoomImage);
+
+        if (prevProps.zoomImage.src !== this.props.zoomImage.src) {
+            this.removeMagnifier();
+        }
 
         const img = new Image();
         
@@ -117,6 +121,10 @@ export default React.createClass({
                 {...this.state}
             />,
             this.portalElement);
+    },
+
+    removeMagnifier() {
+        this.portalElement.innerHTML = '';
     },
 
     render() {
