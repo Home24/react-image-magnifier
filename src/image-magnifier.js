@@ -4,20 +4,6 @@ import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import Magnifier from './magnifier';
 
-function getOffset(el) {
-    var element = el;
-    var x = 0;
-    var y = 0;
-
-    while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
-        x += element.offsetLeft - element.scrollLeft;
-        y += element.offsetTop - element.scrollTop;
-        element = element.offsetParent;
-    }
-
-    return { x, y };
-}
-
 export default React.createClass({
 
     propTypes: {
@@ -57,9 +43,7 @@ export default React.createClass({
         return {
             x: 0,
             y: 0,
-            offsetX: -1,
-            offsetY: -1,
-            zoomImage: {
+            zoomImageDimensions: {
                 width: 0,
                 height: 0
             }
@@ -72,6 +56,8 @@ export default React.createClass({
             document.body.appendChild(this.portalElement);
         }
 
+        this._isMounted = true;
+
         this.loadImage(() => {
             document.addEventListener('mousemove', this.onMouseMove);
         });
@@ -80,9 +66,10 @@ export default React.createClass({
     componentDidUpdate() {
         const { left, top, right, bottom, width, height } = ReactDOM.findDOMNode(this).getBoundingClientRect();
         const { zoomImage, previewWidth, cursorOffset } = this.props;
+        const { x, y, zoomImageDimensions } = this.state;
 
         const smallImage = { left, top, right, bottom, width, height };
-        const zoomImageExtended = assign({}, zoomImage, this.state.zoomImage);
+        const zoomImageExtended = assign({}, zoomImage, zoomImageDimensions);
 
         ReactDOM.render(
             <Magnifier
@@ -90,7 +77,8 @@ export default React.createClass({
                 smallImage={smallImage}
                 zoomImage={zoomImageExtended}
                 cursorOffset={cursorOffset}
-                {...omit(this.state, 'zoomImage')}
+                x={x}
+                y={y}
             />,
             this.portalElement);
     },
@@ -99,15 +87,14 @@ export default React.createClass({
         document.removeEventListener('mousemove', this.onMouseMove);
         document.body.removeChild(this.portalElement);
         this.portalElement = null;
+        this._isMounted = false;
     },
 
     onMouseMove(e) {
-        const offset = getOffset(ReactDOM.findDOMNode(this));
+        // const offset = getOffset(ReactDOM.findDOMNode(this));
         this.setState({
             x: e.x + window.scrollX,
-            y: e.y + window.scrollY,
-            offsetX: e.x - offset.x,
-            offsetY: e.y - offset.y
+            y: e.y + window.scrollY
         });
     },
 
@@ -116,14 +103,20 @@ export default React.createClass({
         const img = new Image();
 
         img.onload = (event) => {
-            const { width, height } = event.currentTarget;
 
-            this.setState({ zoomImage: { width, height } });
+            if (!this._isMounted) {
+                return;
+            }
+
+            const { width, height } = event.currentTarget;
+            this.setState({ zoomImageDimensions: { width, height } });
             callback();
         };
 
         img.src = zoomImage.src;
     },
+
+    _isMounted: false,
 
     portalElement: null,
 

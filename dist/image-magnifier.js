@@ -1,7 +1,5 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -27,20 +25,6 @@ var _magnifier = require('./magnifier');
 var _magnifier2 = _interopRequireDefault(_magnifier);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function getOffset(el) {
-    var element = el;
-    var x = 0;
-    var y = 0;
-
-    while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
-        x += element.offsetLeft - element.scrollLeft;
-        y += element.offsetTop - element.scrollTop;
-        element = element.offsetParent;
-    }
-
-    return { x: x, y: y };
-}
 
 exports.default = _react2.default.createClass({
     displayName: 'image-magnifier',
@@ -81,9 +65,7 @@ exports.default = _react2.default.createClass({
         return {
             x: 0,
             y: 0,
-            offsetX: -1,
-            offsetY: -1,
-            zoomImage: {
+            zoomImageDimensions: {
                 width: 0,
                 height: 0
             }
@@ -96,6 +78,8 @@ exports.default = _react2.default.createClass({
             this.portalElement = document.createElement('div');
             document.body.appendChild(this.portalElement);
         }
+
+        this._isMounted = true;
 
         this.loadImage(function () {
             document.addEventListener('mousemove', _this.onMouseMove);
@@ -114,29 +98,34 @@ exports.default = _react2.default.createClass({
         var zoomImage = _props.zoomImage;
         var previewWidth = _props.previewWidth;
         var cursorOffset = _props.cursorOffset;
+        var _state = this.state;
+        var x = _state.x;
+        var y = _state.y;
+        var zoomImageDimensions = _state.zoomImageDimensions;
 
         var smallImage = { left: left, top: top, right: right, bottom: bottom, width: width, height: height };
-        var zoomImageExtended = (0, _assign2.default)({}, zoomImage, this.state.zoomImage);
+        var zoomImageExtended = (0, _assign2.default)({}, zoomImage, zoomImageDimensions);
 
-        _reactDom2.default.render(_react2.default.createElement(_magnifier2.default, _extends({
+        _reactDom2.default.render(_react2.default.createElement(_magnifier2.default, {
             previewWidth: previewWidth,
             smallImage: smallImage,
             zoomImage: zoomImageExtended,
-            cursorOffset: cursorOffset
-        }, (0, _omit2.default)(this.state, 'zoomImage'))), this.portalElement);
+            cursorOffset: cursorOffset,
+            x: x,
+            y: y
+        }), this.portalElement);
     },
     componentWillUnmount: function componentWillUnmount() {
         document.removeEventListener('mousemove', this.onMouseMove);
         document.body.removeChild(this.portalElement);
         this.portalElement = null;
+        this._isMounted = false;
     },
     onMouseMove: function onMouseMove(e) {
-        var offset = getOffset(_reactDom2.default.findDOMNode(this));
+        // const offset = getOffset(ReactDOM.findDOMNode(this));
         this.setState({
             x: e.x + window.scrollX,
-            y: e.y + window.scrollY,
-            offsetX: e.x - offset.x,
-            offsetY: e.y - offset.y
+            y: e.y + window.scrollY
         });
     },
     loadImage: function loadImage(callback) {
@@ -146,16 +135,23 @@ exports.default = _react2.default.createClass({
         var img = new Image();
 
         img.onload = function (event) {
+
+            if (!_this2._isMounted) {
+                return;
+            }
+
             var _event$currentTarget = event.currentTarget;
             var width = _event$currentTarget.width;
             var height = _event$currentTarget.height;
 
-            _this2.setState({ zoomImage: { width: width, height: height } });
+            _this2.setState({ zoomImageDimensions: { width: width, height: height } });
             callback();
         };
 
         img.src = zoomImage.src;
     },
+
+    _isMounted: false,
 
     portalElement: null,
 

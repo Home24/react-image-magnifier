@@ -28,12 +28,6 @@ exports.default = _react2.default.createClass({
         // y position on screen
         y: _react2.default.PropTypes.number.isRequired,
 
-        // x position relative to the image
-        offsetX: _react2.default.PropTypes.number.isRequired,
-
-        // y position relative to the image
-        offsetY: _react2.default.PropTypes.number.isRequired,
-
         // the offset of the zoom bubble from the cursor
         cursorOffset: _react2.default.PropTypes.shape({
             x: _react2.default.PropTypes.number.isRequired,
@@ -66,8 +60,6 @@ exports.default = _react2.default.createClass({
         var _props = this.props;
         var smallImage = _props.smallImage;
         var zoomImage = _props.zoomImage;
-        var offsetX = _props.offsetX;
-        var offsetY = _props.offsetY;
         var y = _props.y;
         var x = _props.x;
         var previewWidth = _props.previewWidth;
@@ -90,9 +82,13 @@ exports.default = _react2.default.createClass({
         var previewDiffY = previewSizeY / rectangleSizeY;
         var previewDiffX = previewSizeX / rectangleSizeX;
 
-        var isVisible = offsetY < smallImage.height && offsetX < smallImage.width && offsetY > 0 && offsetX > 0;
+        var isVisible = y > smallImage.top && x > smallImage.left && y < smallImage.bottom && x < smallImage.right;
 
         // TODO cursor offset support
+
+        if (!isVisible) {
+            return null;
+        }
 
         // previews rectangles
 
@@ -115,7 +111,7 @@ exports.default = _react2.default.createClass({
             } else {
                 rectanglePosition.top = y;
                 rectanglePosition.marginTop = -rectangleHalfSizeY + cursorOffset.y;
-                previewPosition.vertical = -(offsetY - rectangleHalfSizeY) * previewDiffY + 'px';
+                previewPosition.vertical = -(y - top - rectangleHalfSizeY) * previewDiffY + 'px';
             }
 
             // horizontal position
@@ -128,7 +124,7 @@ exports.default = _react2.default.createClass({
             } else {
                 rectanglePosition.left = x;
                 rectanglePosition.marginLeft = -rectangleHalfSizeX + cursorOffset.x;
-                previewPosition.horizontal = -(offsetX - rectangleHalfSizeX) * previewDiffX + 'px';
+                previewPosition.horizontal = -(x - left - rectangleHalfSizeX) * previewDiffX + 'px';
             }
 
             return { rectanglePosition: rectanglePosition, previewPosition: previewPosition };
@@ -139,7 +135,6 @@ exports.default = _react2.default.createClass({
 
         var rectangleStyles = {
             position: 'absolute',
-            display: isVisible ? 'block' : 'none',
             width: rectangleSizeX,
             height: rectangleSizeY,
             border: '2px solid grey',
@@ -148,7 +143,6 @@ exports.default = _react2.default.createClass({
 
         var previewStyles = {
             position: 'absolute',
-            display: isVisible ? 'block' : 'none',
             left: zoomImage.offset && zoomImage.offset.x ? smallImage.right + zoomImage.offset.x : smallImage.right,
             top: zoomImage.offset && zoomImage.offset.y ? smallImage.top + zoomImage.offset.y : smallImage.top,
             width: previewSizeX,
