@@ -99,11 +99,11 @@ export default React.createClass({
             }
 
             const { width, height } = event.currentTarget;
+
             this.setState({
                 zoomImageDimensions: { width, height },
                 imageLoaded: true
             });
-
             callback();
         };
 
@@ -122,6 +122,10 @@ export default React.createClass({
         const { smallImage, loadingClassName } = this.props;
         const className = this.state.imageLoaded ? '' : (loadingClassName || '');
 
-        return <img src={smallImage.src} alt={smallImage.alt} className={className} />;
+        return (
+            <div className={className}>
+                <img src={smallImage.src} alt={smallImage.alt} />
+            </div>
+        );
     }
 });

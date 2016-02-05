@@ -133,7 +133,6 @@ exports.default = _react2.default.createClass({
                 zoomImageDimensions: { width: width, height: height },
                 imageLoaded: true
             });
-
             callback();
         };
 
@@ -154,6 +153,10 @@ exports.default = _react2.default.createClass({
 
         var className = this.state.imageLoaded ? '' : loadingClassName || '';
 
-        return _react2.default.createElement('img', { src: smallImage.src, alt: smallImage.alt, className: className });
+        return _react2.default.createElement(
+            'div',
+            { className: className },
+            _react2.default.createElement('img', { src: smallImage.src, alt: smallImage.alt })
+        );
     }
 });
