@@ -14,12 +14,6 @@ export default React.createClass({
         // y position on screen
         y: React.PropTypes.number.isRequired,
 
-        // the offset of the zoom bubble from the cursor
-        cursorOffset: React.PropTypes.shape({
-            x: React.PropTypes.number.isRequired,
-            y: React.PropTypes.number.isRequired
-        }).isRequired,
-
         // the size of the non-zoomed-in image
         smallImage: React.PropTypes.shape({
             bottom: React.PropTypes.number.isRequired,
@@ -43,7 +37,17 @@ export default React.createClass({
     },
 
     render() {
-        const { smallImage, zoomImage, y, x, previewWidth, cursorOffset } = this.props;
+        const { smallImage, zoomImage, y, x, previewWidth } = this.props;
+
+        const isVisible = y > smallImage.top &&
+            x > smallImage.left &&
+            y < smallImage.bottom &&
+            x < smallImage.right;
+
+
+        if (!isVisible) {
+            return null;
+        }
 
         const ySmallRatio = smallImage.height / smallImage.width;
         const yBigRatio = zoomImage.height / zoomImage.width;
@@ -53,8 +57,6 @@ export default React.createClass({
 
         const rectangleSizeX = previewWidth * imagesDiffX;
         const rectangleSizeY = rectangleSizeX * ySmallRatio;
-        const rectangleHalfSizeX = Math.floor(rectangleSizeX / 2);
-        const rectangleHalfSizeY = Math.floor(rectangleSizeY / 2);
 
         const previewSizeX = previewWidth;
         const previewSizeY = previewWidth * yBigRatio;
@@ -62,59 +64,11 @@ export default React.createClass({
         const previewDiffY = previewSizeY / rectangleSizeY;
         const previewDiffX = previewSizeX / rectangleSizeX;
 
-
-        const isVisible = y > smallImage.top &&
-            x > smallImage.left &&
-            y < smallImage.bottom &&
-            x < smallImage.right;
-
         // TODO cursor offset support
 
-        if (!isVisible) {
-            return null;
-        }
-
         // previews rectangles
-        const { rectanglePosition, previewPosition } = (() => {
-            const { left, top, right, bottom } = smallImage;
-            const rectanglePosition = {};
-            const previewPosition = {};
-
-            // vertical position
-            if (y + rectangleHalfSizeY >= bottom) {
-                rectanglePosition.top = bottom - rectangleSizeY;
-                previewPosition.vertical = 'bottom';
-
-            } else if (y - rectangleHalfSizeY <= top) {
-                rectanglePosition.top = top;
-                previewPosition.vertical = 'top';
-
-            } else {
-                rectanglePosition.top = y;
-                rectanglePosition.marginTop = -rectangleHalfSizeY + cursorOffset.y;
-                previewPosition.vertical = -(y - top - rectangleHalfSizeY) * previewDiffY + 'px';
-            }
-
-            // horizontal position
-            if (x + rectangleHalfSizeX >= right) {
-                rectanglePosition.left = right - rectangleSizeX;
-                previewPosition.horizontal = 'right';
-
-            } else if (x - rectangleHalfSizeX <= left) {
-                rectanglePosition.left = left;
-                previewPosition.horizontal = 'left';
-
-            } else {
-                rectanglePosition.left = x;
-                rectanglePosition.marginLeft = -rectangleHalfSizeX + cursorOffset.x;
-                previewPosition.horizontal = -(x - left - rectangleHalfSizeX) * previewDiffX + 'px';
-
-            }
-
-            return { rectanglePosition, previewPosition };
-
-        })();
-
+        const { rectanglePosition, previewPosition } =
+            calculateStyles(x, y, smallImage, rectangleSizeX, rectangleSizeY, previewDiffX, previewDiffY);
 
         const rectangleStyles = {
             position: 'absolute',
@@ -132,7 +86,7 @@ export default React.createClass({
             height: previewSizeY,
             backgroundImage: `url(${zoomImage.src})`,
             backgroundRepeat: 'no-repeat',
-            backgroundPosition: `${previewPosition.horizontal} ${previewPosition.vertical}`
+            backgroundPosition: `${previewPosition.bgHorizontal} ${previewPosition.bgVertical}`
         };
 
         return (
@@ -143,3 +97,46 @@ export default React.createClass({
         );
     }
 });
+
+
+function calculateStyles(x, y, smallImage, rectangleSizeX, rectangleSizeY, previewDiffX, previewDiffY) {
+    const { left, top, right, bottom } = smallImage;
+    const rectangleHalfSizeX = Math.floor(rectangleSizeX / 2);
+    const rectangleHalfSizeY = Math.floor(rectangleSizeY / 2);
+
+    const rectanglePosition = {};
+    const previewPosition = {};
+
+    // vertical position
+    if (y + rectangleHalfSizeY >= bottom) {
+        rectanglePosition.top = bottom - rectangleSizeY;
+        previewPosition.bgVertical = 'bottom';
+
+    } else if (y - rectangleHalfSizeY <= top) {
+        rectanglePosition.top = top;
+        previewPosition.bgVertical = 'top';
+
+    } else {
+        rectanglePosition.top = y;
+        rectanglePosition.marginTop = -rectangleHalfSizeY;
+        previewPosition.bgVertical = -(y - top - rectangleHalfSizeY) * previewDiffY + 'px';
+    }
+
+    // horizontal position
+    if (x + rectangleHalfSizeX >= right) {
+        rectanglePosition.left = right - rectangleSizeX;
+        previewPosition.bgHorizontal = 'right';
+
+    } else if (x - rectangleHalfSizeX <= left) {
+        rectanglePosition.left = left;
+        previewPosition.bgHorizontal = 'left';
+
+    } else {
+        rectanglePosition.left = x;
+        rectanglePosition.marginLeft = -rectangleHalfSizeX;
+        previewPosition.bgHorizontal = -(x - left - rectangleHalfSizeX) * previewDiffX + 'px';
+
+    }
+
+    return { rectanglePosition, previewPosition };
+}

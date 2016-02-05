@@ -28,12 +28,6 @@ exports.default = _react2.default.createClass({
         // y position on screen
         y: _react2.default.PropTypes.number.isRequired,
 
-        // the offset of the zoom bubble from the cursor
-        cursorOffset: _react2.default.PropTypes.shape({
-            x: _react2.default.PropTypes.number.isRequired,
-            y: _react2.default.PropTypes.number.isRequired
-        }).isRequired,
-
         // the size of the non-zoomed-in image
         smallImage: _react2.default.PropTypes.shape({
             bottom: _react2.default.PropTypes.number.isRequired,
@@ -63,7 +57,12 @@ exports.default = _react2.default.createClass({
         var y = _props.y;
         var x = _props.x;
         var previewWidth = _props.previewWidth;
-        var cursorOffset = _props.cursorOffset;
+
+        var isVisible = y > smallImage.top && x > smallImage.left && y < smallImage.bottom && x < smallImage.right;
+
+        if (!isVisible) {
+            return null;
+        }
 
         var ySmallRatio = smallImage.height / smallImage.width;
         var yBigRatio = zoomImage.height / zoomImage.width;
@@ -73,8 +72,6 @@ exports.default = _react2.default.createClass({
 
         var rectangleSizeX = previewWidth * imagesDiffX;
         var rectangleSizeY = rectangleSizeX * ySmallRatio;
-        var rectangleHalfSizeX = Math.floor(rectangleSizeX / 2);
-        var rectangleHalfSizeY = Math.floor(rectangleSizeY / 2);
 
         var previewSizeX = previewWidth;
         var previewSizeY = previewWidth * yBigRatio;
@@ -82,56 +79,14 @@ exports.default = _react2.default.createClass({
         var previewDiffY = previewSizeY / rectangleSizeY;
         var previewDiffX = previewSizeX / rectangleSizeX;
 
-        var isVisible = y > smallImage.top && x > smallImage.left && y < smallImage.bottom && x < smallImage.right;
-
         // TODO cursor offset support
-
-        if (!isVisible) {
-            return null;
-        }
 
         // previews rectangles
 
-        var _ref = function () {
-            var left = smallImage.left;
-            var top = smallImage.top;
-            var right = smallImage.right;
-            var bottom = smallImage.bottom;
+        var _calculateStyles = calculateStyles(x, y, smallImage, rectangleSizeX, rectangleSizeY, previewDiffX, previewDiffY);
 
-            var rectanglePosition = {};
-            var previewPosition = {};
-
-            // vertical position
-            if (y + rectangleHalfSizeY >= bottom) {
-                rectanglePosition.top = bottom - rectangleSizeY;
-                previewPosition.vertical = 'bottom';
-            } else if (y - rectangleHalfSizeY <= top) {
-                rectanglePosition.top = top;
-                previewPosition.vertical = 'top';
-            } else {
-                rectanglePosition.top = y;
-                rectanglePosition.marginTop = -rectangleHalfSizeY + cursorOffset.y;
-                previewPosition.vertical = -(y - top - rectangleHalfSizeY) * previewDiffY + 'px';
-            }
-
-            // horizontal position
-            if (x + rectangleHalfSizeX >= right) {
-                rectanglePosition.left = right - rectangleSizeX;
-                previewPosition.horizontal = 'right';
-            } else if (x - rectangleHalfSizeX <= left) {
-                rectanglePosition.left = left;
-                previewPosition.horizontal = 'left';
-            } else {
-                rectanglePosition.left = x;
-                rectanglePosition.marginLeft = -rectangleHalfSizeX + cursorOffset.x;
-                previewPosition.horizontal = -(x - left - rectangleHalfSizeX) * previewDiffX + 'px';
-            }
-
-            return { rectanglePosition: rectanglePosition, previewPosition: previewPosition };
-        }();
-
-        var rectanglePosition = _ref.rectanglePosition;
-        var previewPosition = _ref.previewPosition;
+        var rectanglePosition = _calculateStyles.rectanglePosition;
+        var previewPosition = _calculateStyles.previewPosition;
 
         var rectangleStyles = {
             position: 'absolute',
@@ -149,7 +104,7 @@ exports.default = _react2.default.createClass({
             height: previewSizeY,
             backgroundImage: 'url(' + zoomImage.src + ')',
             backgroundRepeat: 'no-repeat',
-            backgroundPosition: previewPosition.horizontal + ' ' + previewPosition.vertical
+            backgroundPosition: previewPosition.bgHorizontal + ' ' + previewPosition.bgVertical
         };
 
         return _react2.default.createElement(
@@ -160,3 +115,44 @@ exports.default = _react2.default.createClass({
         );
     }
 });
+
+function calculateStyles(x, y, smallImage, rectangleSizeX, rectangleSizeY, previewDiffX, previewDiffY) {
+    var left = smallImage.left;
+    var top = smallImage.top;
+    var right = smallImage.right;
+    var bottom = smallImage.bottom;
+
+    var rectangleHalfSizeX = Math.floor(rectangleSizeX / 2);
+    var rectangleHalfSizeY = Math.floor(rectangleSizeY / 2);
+
+    var rectanglePosition = {};
+    var previewPosition = {};
+
+    // vertical position
+    if (y + rectangleHalfSizeY >= bottom) {
+        rectanglePosition.top = bottom - rectangleSizeY;
+        previewPosition.bgVertical = 'bottom';
+    } else if (y - rectangleHalfSizeY <= top) {
+        rectanglePosition.top = top;
+        previewPosition.bgVertical = 'top';
+    } else {
+        rectanglePosition.top = y;
+        rectanglePosition.marginTop = -rectangleHalfSizeY;
+        previewPosition.bgVertical = -(y - top - rectangleHalfSizeY) * previewDiffY + 'px';
+    }
+
+    // horizontal position
+    if (x + rectangleHalfSizeX >= right) {
+        rectanglePosition.left = right - rectangleSizeX;
+        previewPosition.bgHorizontal = 'right';
+    } else if (x - rectangleHalfSizeX <= left) {
+        rectanglePosition.left = left;
+        previewPosition.bgHorizontal = 'left';
+    } else {
+        rectanglePosition.left = x;
+        rectanglePosition.marginLeft = -rectangleHalfSizeX;
+        previewPosition.bgHorizontal = -(x - left - rectangleHalfSizeX) * previewDiffX + 'px';
+    }
+
+    return { rectanglePosition: rectanglePosition, previewPosition: previewPosition };
+}

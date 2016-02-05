@@ -1,22 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import assign from 'lodash/assign';
-import omit from 'lodash/omit';
 import Magnifier from './magnifier';
 
 export default React.createClass({
 
     propTypes: {
 
-        children: React.PropTypes.element,
-
         previewWidth: React.PropTypes.number,
 
-        // the offset of the zoom bubble from the cursor
-        cursorOffset: React.PropTypes.shape({
-            x: React.PropTypes.number.isRequired,
-            y: React.PropTypes.number.isRequired
-        }),
 
         smallImage: React.PropTypes.shape({
             src: React.PropTypes.string.isRequired,
@@ -29,13 +21,14 @@ export default React.createClass({
                 y: React.PropTypes.number
             }),
             src: React.PropTypes.string.isRequired
-        }).isRequired
+        }).isRequired,
+
+        loadingClassName: React.PropTypes.string
     },
 
     getDefaultProps() {
         return {
-            previewWidth: 200,
-            cursorOffset: { x: 0, y: 0 }
+            previewWidth: 200
         };
     },
 
@@ -43,10 +36,8 @@ export default React.createClass({
         return {
             x: 0,
             y: 0,
-            zoomImageDimensions: {
-                width: 0,
-                height: 0
-            }
+            zoomImageDimensions: { width: 0, height: 0 },
+            imageLoaded: false
         };
     },
 
@@ -65,7 +56,7 @@ export default React.createClass({
 
     componentDidUpdate() {
         const { left, top, right, bottom, width, height } = ReactDOM.findDOMNode(this).getBoundingClientRect();
-        const { zoomImage, previewWidth, cursorOffset } = this.props;
+        const { zoomImage, previewWidth } = this.props;
         const { x, y, zoomImageDimensions } = this.state;
 
         const smallImage = { left, top, right, bottom, width, height };
@@ -76,7 +67,6 @@ export default React.createClass({
                 previewWidth={previewWidth}
                 smallImage={smallImage}
                 zoomImage={zoomImageExtended}
-                cursorOffset={cursorOffset}
                 x={x}
                 y={y}
             />,
@@ -109,7 +99,11 @@ export default React.createClass({
             }
 
             const { width, height } = event.currentTarget;
-            this.setState({ zoomImageDimensions: { width, height } });
+            this.setState({
+                zoomImageDimensions: { width, height },
+                imageLoaded: true
+            });
+
             callback();
         };
 
@@ -125,8 +119,9 @@ export default React.createClass({
     },
 
     render() {
-        const { smallImage } = this.props;
+        const { smallImage, loadingClassName } = this.props;
+        const className = this.state.imageLoaded ? '' : (loadingClassName || '');
 
-        return <img src={smallImage.src} alt={smallImage.alt} />
+        return <img src={smallImage.src} alt={smallImage.alt} className={className} />;
     }
 });

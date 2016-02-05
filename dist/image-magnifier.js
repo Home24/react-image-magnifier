@@ -16,10 +16,6 @@ var _assign = require('lodash/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
 
-var _omit = require('lodash/omit');
-
-var _omit2 = _interopRequireDefault(_omit);
-
 var _magnifier = require('./magnifier');
 
 var _magnifier2 = _interopRequireDefault(_magnifier);
@@ -31,15 +27,7 @@ exports.default = _react2.default.createClass({
 
     propTypes: {
 
-        children: _react2.default.PropTypes.element,
-
         previewWidth: _react2.default.PropTypes.number,
-
-        // the offset of the zoom bubble from the cursor
-        cursorOffset: _react2.default.PropTypes.shape({
-            x: _react2.default.PropTypes.number.isRequired,
-            y: _react2.default.PropTypes.number.isRequired
-        }),
 
         smallImage: _react2.default.PropTypes.shape({
             src: _react2.default.PropTypes.string.isRequired,
@@ -52,23 +40,22 @@ exports.default = _react2.default.createClass({
                 y: _react2.default.PropTypes.number
             }),
             src: _react2.default.PropTypes.string.isRequired
-        }).isRequired
+        }).isRequired,
+
+        loadingClassName: _react2.default.PropTypes.string
     },
 
     getDefaultProps: function getDefaultProps() {
         return {
-            previewWidth: 200,
-            cursorOffset: { x: 0, y: 0 }
+            previewWidth: 200
         };
     },
     getInitialState: function getInitialState() {
         return {
             x: 0,
             y: 0,
-            zoomImageDimensions: {
-                width: 0,
-                height: 0
-            }
+            zoomImageDimensions: { width: 0, height: 0 },
+            imageLoaded: false
         };
     },
     componentDidMount: function componentDidMount() {
@@ -97,7 +84,6 @@ exports.default = _react2.default.createClass({
         var _props = this.props;
         var zoomImage = _props.zoomImage;
         var previewWidth = _props.previewWidth;
-        var cursorOffset = _props.cursorOffset;
         var _state = this.state;
         var x = _state.x;
         var y = _state.y;
@@ -110,7 +96,6 @@ exports.default = _react2.default.createClass({
             previewWidth: previewWidth,
             smallImage: smallImage,
             zoomImage: zoomImageExtended,
-            cursorOffset: cursorOffset,
             x: x,
             y: y
         }), this.portalElement);
@@ -144,7 +129,11 @@ exports.default = _react2.default.createClass({
             var width = _event$currentTarget.width;
             var height = _event$currentTarget.height;
 
-            _this2.setState({ zoomImageDimensions: { width: width, height: height } });
+            _this2.setState({
+                zoomImageDimensions: { width: width, height: height },
+                imageLoaded: true
+            });
+
             callback();
         };
 
@@ -159,8 +148,12 @@ exports.default = _react2.default.createClass({
         this.portalElement.innerHTML = '';
     },
     render: function render() {
-        var smallImage = this.props.smallImage;
+        var _props2 = this.props;
+        var smallImage = _props2.smallImage;
+        var loadingClassName = _props2.loadingClassName;
 
-        return _react2.default.createElement('img', { src: smallImage.src, alt: smallImage.alt });
+        var className = this.state.imageLoaded ? '' : loadingClassName || '';
+
+        return _react2.default.createElement('img', { src: smallImage.src, alt: smallImage.alt, className: className });
     }
 });
