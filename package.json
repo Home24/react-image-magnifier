@@ -4,7 +4,7 @@
   "description": "HOME24 fork. A react component that accepts a high-res source image and produces a magnifier window on mouse hover over the part of the image the cursor is over",
   "main": "dist/image-magnifier.js",
   "scripts": {
-    "postinstall": "npm run build && npm run transpile",
+    "prepublish": "npm run build && npm run transpile",
     "build": "webpack  --verbose --colors --display-error-details --config webpack.config.js",
     "transpile": "babel src/ --ignore node_modules -d dist/",
     "example": "webpack-dev-server --watch-poll 500 --content-base src --config webpack.example.config.js"
