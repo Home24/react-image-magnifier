@@ -8,15 +8,28 @@ import ImageMagnifier from '../../src/image-magnifier';
 
 var App = React.createClass({
 
+    getInitialState() {
+        return { show: true };
+    },
+
+    handleClick() {
+        this.setState({ show: !this.state.show });
+    },
+
     render() {
+        const component = this.state.show ? (
+            <ImageMagnifier
+                smallImage={{ src: 'img/bed-small.jpg', alt: '123' }}
+                zoomImage={{ src: 'img/bed-large.jpg', offset: { x: 0, y: 0 } }}
+                previewWidth={800}
+                loadingClassName="loading"
+            />
+        ) : null;
+
         return (
             <div>
-                <ImageMagnifier
-                    smallImage={{ src: 'img/bed-small.jpg', alt: '123' }}
-                    zoomImage={{ src: 'img/bed-large.jpg', offset: { x: 0, y: 0 } }}
-                    previewWidth={900}
-                    loadingClassName="loading"
-                />
+                {component}
+                <button onClick={this.handleClick}>Toggle visibility</button>
             </div>
         );
     }

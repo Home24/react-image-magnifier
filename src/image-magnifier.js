@@ -75,6 +75,7 @@ export default React.createClass({
 
     componentWillUnmount() {
         document.removeEventListener('mousemove', this.onMouseMove);
+        ReactDOM.unmountComponentAtNode(this.portalElement);
         document.body.removeChild(this.portalElement);
         this.portalElement = null;
         this._isMounted = false;
