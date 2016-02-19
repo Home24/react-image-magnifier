@@ -21,7 +21,8 @@ var App = React.createClass({
             <ImageMagnifier
                 smallImage={{ src: 'img/bed-small.jpg', alt: '123' }}
                 zoomImage={{ src: 'img/bed-large.jpg', offset: { x: 0, y: 0 } }}
-                previewWidth={800}
+                previewWidth={500}
+                previewHeight={800}
                 loadingClassName="loading"
             />
         ) : null;

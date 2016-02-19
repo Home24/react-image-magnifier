@@ -7,7 +7,8 @@
     "prepublish": "npm run build && npm run transpile",
     "build": "webpack  --verbose --colors --display-error-details --config webpack.config.js",
     "transpile": "babel src/ --ignore node_modules -d dist/",
-    "example": "webpack-dev-server --watch-poll 500 --content-base src --config webpack.example.config.js"
+    "dev-server": "webpack-dev-server --no-info --watch-poll 500 --content-base src --config webpack.example.config.js",
+    "example": "http-server ./example -p 8000 & npm run dev-server"
   },
   "repository": {
     "type": "git",
@@ -21,17 +22,13 @@
   ],
   "author": "Leland Richardson",
   "license": "MIT",
-  "dependencies": {
-  },
+  "dependencies": {},
   "peerDependencies": {
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "lodash": "^4.2.0"
   },
   "devDependencies": {
-    "lodash": "^4.2.0",
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7",
     "babel": "^6.3.0",
     "babel-cli": "^6.4.5",
     "babel-core": "^6.4.0",
@@ -43,6 +40,10 @@
     "eslint": "^1.10.3",
     "eslint-config-airbnb": "^4.0.0",
     "eslint-plugin-react": "^3.11.3",
+    "http-server": "^0.9.0",
+    "lodash": "^4.2.0",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
     "webpack": "^1.9.10",
     "webpack-dev-server": "^1.14.1"
   }
