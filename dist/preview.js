@@ -52,6 +52,7 @@ exports.default = _react2.default.createClass({
         var previewStyles = {
             position: 'fixed',
             transform: 'translateZ(0)',
+            zIndex: '9999',
             left: zoomImage.offset && zoomImage.offset.x ? smallImage.right + zoomImage.offset.x : smallImage.right,
             top: zoomImage.offset && zoomImage.offset.y ? smallImage.top + zoomImage.offset.y : smallImage.top,
             width: width,

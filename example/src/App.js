@@ -4,25 +4,47 @@ require('es5-shim/es5-sham');
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import assign from 'lodash/assign';
 import ImageMagnifier from '../../src/image-magnifier';
 
 var App = React.createClass({
 
     getInitialState() {
-        return { show: true };
+        return {
+            show: true,
+            images: {
+                small: 'img/bed-small.jpg',
+                big: 'img/bed-large.jpg'
+            }
+        };
     },
 
-    handleClick() {
+    toggleVisibility() {
         this.setState({ show: !this.state.show });
     },
 
+    changeImage() {
+        this.setState({
+            images: {
+                small: 'img/cat-small.jpg',
+                big: 'img/cat-large.jpg'
+            }
+        });
+    },
+
+    reset() {
+        this.setState(this.getInitialState());
+    },
+
     render() {
-        const component = this.state.show ? (
+        const { show, images } = this.state;
+
+        const component = show ? (
             <ImageMagnifier
-                smallImage={{ src: 'img/bed-small.jpg', alt: '123' }}
-                zoomImage={{ src: 'img/bed-large.jpg', offset: { x: 0, y: 0 } }}
-                previewWidth={500}
-                previewHeight={800}
+                smallImage={{ src: images.small, alt: 'alt' }}
+                zoomImage={{ src: images.big }}
+                previewWidth={300}
+                previewHeight={200}
                 loadingClassName="loading"
             />
         ) : null;
@@ -30,7 +52,9 @@ var App = React.createClass({
         return (
             <div>
                 {component}
-                <button onClick={this.handleClick}>Toggle visibility</button>
+                <button onClick={this.toggleVisibility}>Toggle visibility</button>
+                <button onClick={this.changeImage}>Change Image</button>
+                <button onClick={this.reset}>Reset</button>
             </div>
         );
     }

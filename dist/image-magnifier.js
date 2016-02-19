@@ -70,25 +70,14 @@ exports.default = _react2.default.createClass({
         };
     },
     componentDidMount: function componentDidMount() {
-        var _this = this;
-
         this._isMounted = true;
-
-        this.loadImage(function (width, height) {
-
-            _this.setState({
-                zoomImageDimensions: { width: width, height: height },
-                imageLoaded: true
-            });
-
-            _this.bindEvents();
-        });
+        this.loadImage(this.props.zoomImage.src);
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         if (this.props.zoomImage !== nextProps.zoomImage) {
-            console.log('image was changed');
-            this.setState({ imageLoaded: false });
-            this.loadImage();
+            this.unbindEvents();
+            this.setState({ imageLoaded: false, isActive: false });
+            this.loadImage(nextProps.zoomImage.src);
         }
     },
     componentDidUpdate: function componentDidUpdate() {
@@ -96,7 +85,7 @@ exports.default = _react2.default.createClass({
     },
     componentWillUnmount: function componentWillUnmount() {
         this.onLeave();
-        this.unBindEvents();
+        this.unbindEvents();
         this._isMounted = false;
     },
     onEnter: function onEnter() {
@@ -122,21 +111,19 @@ exports.default = _react2.default.createClass({
         el.addEventListener('mouseleave', this.onLeave);
         el.addEventListener('click', this.onClick);
     },
-    unBindEvents: function unBindEvents() {
+    unbindEvents: function unbindEvents() {
         var el = this.refs.stage;
-        el.removeEventListener('mouseenter');
-        el.removeEventListener('mouseleave');
-        el.removeEventListener('click');
+        el.removeEventListener('mouseenter', this.onEnter);
+        el.removeEventListener('mouseleave', this.onLeave);
+        el.removeEventListener('click', this.onClick);
     },
-    loadImage: function loadImage(callback) {
-        var _this2 = this;
+    loadImage: function loadImage(src) {
+        var _this = this;
 
-        var zoomImage = (0, _assign2.default)(this.props.zoomImage);
         var img = new Image();
 
         img.onload = function (event) {
-
-            if (!_this2._isMounted) {
+            if (!_this._isMounted) {
                 return;
             }
 
@@ -144,14 +131,22 @@ exports.default = _react2.default.createClass({
             var width = _event$currentTarget.width;
             var height = _event$currentTarget.height;
 
-            callback(width, height);
+            _this.handleImageLoad(width, height);
         };
 
-        img.src = zoomImage.src;
+        img.src = src;
     },
 
     _isMounted: false,
 
+    handleImageLoad: function handleImageLoad(width, height) {
+        this.setState({
+            zoomImageDimensions: { width: width, height: height },
+            imageLoaded: true
+        });
+
+        this.bindEvents();
+    },
     removeMagnifier: function removeMagnifier() {
         _reactDom2.default.unmountComponentAtNode(this.refs.lens);
         _reactDom2.default.unmountComponentAtNode(this.refs.preview);
@@ -170,7 +165,7 @@ exports.default = _react2.default.createClass({
 
         var isVisible = y > smallImage.top && x > smallImage.left && y < smallImage.bottom && x < smallImage.right;
 
-        if (!isActive || !isVisible) {
+        if (!isActive) {
             this.removeMagnifier();
             return;
         }
@@ -219,7 +214,6 @@ exports.default = _react2.default.createClass({
         var isActive = _state2.isActive;
 
         var className = this.state.imageLoaded ? '' : loadingClassName || '';
-
         var style = { position: 'relative' };
 
         if (imageLoaded) {

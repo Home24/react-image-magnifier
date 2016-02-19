@@ -40,30 +40,21 @@ export default React.createClass({
             x: 0,
             y: 0,
             zoomImageDimensions: { width: 0, height: 0 },
-            imageLoaded: false,
+            isImageLoaded: false,
             isActive: false
         };
     },
 
     componentDidMount() {
         this._isMounted = true;
-
-        this.loadImage((width, height) => {
-
-            this.setState({
-                zoomImageDimensions: { width, height },
-                imageLoaded: true
-            });
-
-            this.bindEvents();
-        });
+        this.loadImage(this.props.zoomImage.src);
+        this.bindEvents();
     },
 
     componentWillReceiveProps(nextProps) {
         if (this.props.zoomImage !== nextProps.zoomImage) {
-            console.log('image was changed');
-            this.setState({ imageLoaded: false });
-            this.loadImage();
+            this.setState({ isImageLoaded: false, isActive: false });
+            this.loadImage(nextProps.zoomImage.src);
         }
     },
 
@@ -73,7 +64,7 @@ export default React.createClass({
 
     componentWillUnmount() {
         this.onLeave();
-        this.unBindEvents();
+        this.unbindEvents();
         this._isMounted = false;
     },
 
@@ -106,31 +97,36 @@ export default React.createClass({
         el.addEventListener('click', this.onClick);
     },
     
-    unBindEvents() {
+    unbindEvents() {
         const el = this.refs.stage;
-        el.removeEventListener('mouseenter');
-        el.removeEventListener('mouseleave');
-        el.removeEventListener('click');
+        el.removeEventListener('mouseenter', this.onEnter);
+        el.removeEventListener('mouseleave', this.onLeave);
+        el.removeEventListener('click', this.onClick);
     },
 
-    loadImage(callback) {
-        const zoomImage = assign(this.props.zoomImage);
+    loadImage(src) {
         const img = new Image();
 
         img.onload = (event) => {
-
             if (!this._isMounted) {
                 return;
             }
 
             const { width, height } = event.currentTarget;
-            callback(width, height);
+            this.handleImageLoad(width, height);
         };
 
-        img.src = zoomImage.src;
+        img.src = src;
     },
 
     _isMounted: false,
+
+    handleImageLoad(width, height) {
+        this.setState({
+            zoomImageDimensions: { width, height },
+            isImageLoaded: true
+        });
+    },
 
     removeMagnifier() {
         ReactDOM.unmountComponentAtNode(this.refs.lens);
@@ -140,14 +136,14 @@ export default React.createClass({
     renderMagnifier() {
         const smallImage = ReactDOM.findDOMNode(this).getBoundingClientRect();
         const { zoomImage, previewWidth, previewHeight } = this.props;
-        const { x, y, zoomImageDimensions, isActive } = this.state;
+        const { x, y, zoomImageDimensions, isActive, isImageLoaded } = this.state;
 
         const isVisible = y > smallImage.top &&
             x > smallImage.left &&
             y < smallImage.bottom &&
             x < smallImage.right;
 
-        if (!isActive || !isVisible) {
+        if (!isActive || !isImageLoaded) {
             this.removeMagnifier();
             return;
         }
@@ -192,12 +188,12 @@ export default React.createClass({
 
     render() {
         const { smallImage, children, loadingClassName } = this.props;
-        const { imageLoaded, isActive } = this.state;
+        const { isImageLoaded, isActive } = this.state;
 
-        const className = this.state.imageLoaded ? '' : (loadingClassName || '');
+        const className = isImageLoaded ? '' : (loadingClassName || '');
         const style = { position: 'relative' };
 
-        if (imageLoaded) {
+        if (isImageLoaded) {
             style.cursor = isActive ? 'zoom-out' : 'zoom-in';
         }
 
