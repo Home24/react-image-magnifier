@@ -65,18 +65,18 @@ exports.default = _react2.default.createClass({
             x: 0,
             y: 0,
             zoomImageDimensions: { width: 0, height: 0 },
-            imageLoaded: false,
+            isImageLoaded: false,
             isActive: false
         };
     },
     componentDidMount: function componentDidMount() {
         this._isMounted = true;
         this.loadImage(this.props.zoomImage.src);
+        this.bindEvents();
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         if (this.props.zoomImage !== nextProps.zoomImage) {
-            this.unbindEvents();
-            this.setState({ imageLoaded: false, isActive: false });
+            this.setState({ isImageLoaded: false, isActive: false });
             this.loadImage(nextProps.zoomImage.src);
         }
     },
@@ -142,10 +142,8 @@ exports.default = _react2.default.createClass({
     handleImageLoad: function handleImageLoad(width, height) {
         this.setState({
             zoomImageDimensions: { width: width, height: height },
-            imageLoaded: true
+            isImageLoaded: true
         });
-
-        this.bindEvents();
     },
     removeMagnifier: function removeMagnifier() {
         _reactDom2.default.unmountComponentAtNode(this.refs.lens);
@@ -162,10 +160,11 @@ exports.default = _react2.default.createClass({
         var y = _state.y;
         var zoomImageDimensions = _state.zoomImageDimensions;
         var isActive = _state.isActive;
+        var isImageLoaded = _state.isImageLoaded;
 
         var isVisible = y > smallImage.top && x > smallImage.left && y < smallImage.bottom && x < smallImage.right;
 
-        if (!isActive) {
+        if (!isActive || !isImageLoaded) {
             this.removeMagnifier();
             return;
         }
@@ -210,13 +209,13 @@ exports.default = _react2.default.createClass({
         var children = _props2.children;
         var loadingClassName = _props2.loadingClassName;
         var _state2 = this.state;
-        var imageLoaded = _state2.imageLoaded;
+        var isImageLoaded = _state2.isImageLoaded;
         var isActive = _state2.isActive;
 
-        var className = this.state.imageLoaded ? '' : loadingClassName || '';
+        var className = isImageLoaded ? '' : loadingClassName || '';
         var style = { position: 'relative' };
 
-        if (imageLoaded) {
+        if (isImageLoaded) {
             style.cursor = isActive ? 'zoom-out' : 'zoom-in';
         }
 
