@@ -162,8 +162,6 @@ exports.default = _react2.default.createClass({
         var isActive = _state.isActive;
         var isImageLoaded = _state.isImageLoaded;
 
-        var isVisible = y > smallImage.top && x > smallImage.left && y < smallImage.bottom && x < smallImage.right;
-
         if (!isActive || !isImageLoaded) {
             this.removeMagnifier();
             return;

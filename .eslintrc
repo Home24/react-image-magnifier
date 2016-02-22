@@ -37,6 +37,7 @@
     },
     "globals": {
         "sinon": false,
+        "expect": false,
         "__LOCALE__": false
     },
     "extends": "airbnb"

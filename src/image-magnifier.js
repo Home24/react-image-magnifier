@@ -138,11 +138,6 @@ export default React.createClass({
         const { zoomImage, previewWidth, previewHeight } = this.props;
         const { x, y, zoomImageDimensions, isActive, isImageLoaded } = this.state;
 
-        const isVisible = y > smallImage.top &&
-            x > smallImage.left &&
-            y < smallImage.bottom &&
-            x < smallImage.right;
-
         if (!isActive || !isImageLoaded) {
             this.removeMagnifier();
             return;
@@ -205,7 +200,7 @@ export default React.createClass({
         } else {
             content = children;
         }
-
+        
         return (
             <div onTouchStart={this.onTouchStart}>
                 <div className={className} style={style} ref="stage">
