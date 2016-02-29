@@ -87,7 +87,7 @@ export default React.createClass({
     },
 
     onMouseMove(e) {
-        this.setState({ x: e.x, y: e.y });
+        this.setState({ x: e.clientX, y: e.clientY });
     },
 
     bindEvents() {
