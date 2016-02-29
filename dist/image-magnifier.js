@@ -103,7 +103,7 @@ exports.default = _react2.default.createClass({
         document.removeEventListener('mousemove', this.onMouseMove);
     },
     onMouseMove: function onMouseMove(e) {
-        this.setState({ x: e.x, y: e.y });
+        this.setState({ x: e.clientX, y: e.clientY });
     },
     bindEvents: function bindEvents() {
         var el = this.refs.stage;
