@@ -16,6 +16,10 @@ var _assign = require('lodash/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
 
+var _debounce = require('lodash/debounce');
+
+var _debounce2 = _interopRequireDefault(_debounce);
+
 var _lens = require('./lens');
 
 var _lens2 = _interopRequireDefault(_lens);
@@ -66,11 +70,16 @@ exports.default = _react2.default.createClass({
             y: 0,
             zoomImageDimensions: { width: 0, height: 0 },
             isImageLoaded: false,
-            isActive: false
+            isActive: false,
+            isScrolling: false
         };
     },
     componentDidMount: function componentDidMount() {
         this._isMounted = true;
+        this.onScrollFinish = (0, _debounce2.default)(this.onScrollFinish, 200); // will be called in the end of scrolling
+        this.onScrollStart = (0, _debounce2.default)(this.onScrollStart, 200, { leading: true, trailing: false }); // will be called on start of scrolling
+
+        this.appendPreviewPlaceholder();
         this.loadImage(this.props.zoomImage.src);
         this.bindEvents();
     },
@@ -86,10 +95,13 @@ exports.default = _react2.default.createClass({
     componentWillUnmount: function componentWillUnmount() {
         this.onLeave();
         this.unbindEvents();
+        this.removePreviewPlaceholder();
         this._isMounted = false;
     },
     onEnter: function onEnter() {
         document.addEventListener('mousemove', this.onMouseMove);
+        window.addEventListener('scroll', this.onScrollFinish);
+        window.addEventListener('scroll', this.onScrollStart);
     },
     onClick: function onClick() {
         this.setState({ isActive: !this.state.isActive });
@@ -101,9 +113,17 @@ exports.default = _react2.default.createClass({
     onLeave: function onLeave() {
         this.removeMagnifier();
         document.removeEventListener('mousemove', this.onMouseMove);
+        window.removeEventListener('scroll', this.onScrollFinish);
+        window.removeEventListener('scroll', this.onScrollStart);
     },
     onMouseMove: function onMouseMove(e) {
         this.setState({ x: e.clientX, y: e.clientY });
+    },
+    onScrollFinish: function onScrollFinish() {
+        this.setState({ isScrolling: false });
+    },
+    onScrollStart: function onScrollStart() {
+        this.setState({ isScrolling: true });
     },
     bindEvents: function bindEvents() {
         var el = this.refs.stage;
@@ -139,6 +159,8 @@ exports.default = _react2.default.createClass({
 
     _isMounted: false,
 
+    previewPlaceholder: null,
+
     handleImageLoad: function handleImageLoad(width, height) {
         this.setState({
             zoomImageDimensions: { width: width, height: height },
@@ -147,7 +169,18 @@ exports.default = _react2.default.createClass({
     },
     removeMagnifier: function removeMagnifier() {
         _reactDom2.default.unmountComponentAtNode(this.refs.lens);
-        _reactDom2.default.unmountComponentAtNode(this.refs.preview);
+        _reactDom2.default.unmountComponentAtNode(this.previewPlaceholder);
+    },
+    appendPreviewPlaceholder: function appendPreviewPlaceholder() {
+        this.previewPlaceholder = document.body.appendChild(document.createElement('div'));
+    },
+    removePreviewPlaceholder: function removePreviewPlaceholder() {
+        if (!this.previewPlaceholder) {
+            return;
+        }
+
+        document.body.removeChild(this.previewPlaceholder);
+        this.previewPlaceholder = null;
     },
     renderMagnifier: function renderMagnifier() {
         var smallImage = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
@@ -161,8 +194,9 @@ exports.default = _react2.default.createClass({
         var zoomImageDimensions = _state.zoomImageDimensions;
         var isActive = _state.isActive;
         var isImageLoaded = _state.isImageLoaded;
+        var isScrolling = _state.isScrolling;
 
-        if (!isActive || !isImageLoaded) {
+        if (!isActive || !isImageLoaded || isScrolling) {
             this.removeMagnifier();
             return;
         }
@@ -199,7 +233,7 @@ exports.default = _react2.default.createClass({
             width: previewWidth,
             height: previewHeight,
             position: previewPosition
-        }), this.refs.preview);
+        }), this.previewPlaceholder);
     },
     render: function render() {
         var _props2 = this.props;
@@ -233,8 +267,7 @@ exports.default = _react2.default.createClass({
                 { className: className, style: style, ref: 'stage' },
                 content,
                 _react2.default.createElement('div', { ref: 'lens' })
-            ),
-            _react2.default.createElement('div', { ref: 'preview' })
+            )
         );
     }
 });

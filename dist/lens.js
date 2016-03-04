@@ -41,6 +41,7 @@ exports.default = _react2.default.createClass({
         var styles = {
             position: 'absolute',
             border: '2px solid grey',
+            transform: 'translateZ(0)',
             width: width,
             height: height
         };

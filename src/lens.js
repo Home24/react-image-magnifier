@@ -24,6 +24,7 @@ export default React.createClass({
         const styles = {
             position: 'absolute',
             border: '2px solid grey',
+            transform: 'translateZ(0)',
             width,
             height
         };
