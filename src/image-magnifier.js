@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import assign from 'lodash/assign';
+import debounce from 'lodash/debounce';
 import Lens from './lens';
 import Preview from './preview';
 import calculatePositionStyles from './helpers/calculate-position-styles';
@@ -41,12 +42,17 @@ export default React.createClass({
             y: 0,
             zoomImageDimensions: { width: 0, height: 0 },
             isImageLoaded: false,
-            isActive: false
+            isActive: false,
+            isScrolling: false
         };
     },
 
     componentDidMount() {
         this._isMounted = true;
+        this.onScrollFinish = debounce(this.onScrollFinish, 200); // will be called in the end of scrolling
+        this.onScrollStart = debounce(this.onScrollStart, 200, { leading: true, trailing: false }); // will be called on start of scrolling
+
+        this.appendPreviewPlaceholder();
         this.loadImage(this.props.zoomImage.src);
         this.bindEvents();
     },
@@ -65,11 +71,14 @@ export default React.createClass({
     componentWillUnmount() {
         this.onLeave();
         this.unbindEvents();
+        this.removePreviewPlaceholder();
         this._isMounted = false;
     },
 
     onEnter() {
         document.addEventListener('mousemove', this.onMouseMove);
+        window.addEventListener('scroll', this.onScrollFinish);
+        window.addEventListener('scroll', this.onScrollStart);
     },
 
     onClick() {
@@ -84,10 +93,21 @@ export default React.createClass({
     onLeave() {
         this.removeMagnifier();
         document.removeEventListener('mousemove', this.onMouseMove);
+        window.removeEventListener('scroll', this.onScrollFinish);
+        window.removeEventListener('scroll', this.onScrollStart);
+
     },
 
     onMouseMove(e) {
         this.setState({ x: e.clientX, y: e.clientY });
+    },
+
+    onScrollFinish() {
+        this.setState({ isScrolling: false });
+    },
+
+    onScrollStart() {
+        this.setState({ isScrolling: true });
     },
 
     bindEvents() {
@@ -121,6 +141,8 @@ export default React.createClass({
 
     _isMounted: false,
 
+    previewPlaceholder: null,
+
     handleImageLoad(width, height) {
         this.setState({
             zoomImageDimensions: { width, height },
@@ -130,15 +152,28 @@ export default React.createClass({
 
     removeMagnifier() {
         ReactDOM.unmountComponentAtNode(this.refs.lens);
-        ReactDOM.unmountComponentAtNode(this.refs.preview);
+        ReactDOM.unmountComponentAtNode(this.previewPlaceholder);
+    },
+
+    appendPreviewPlaceholder() {
+        this.previewPlaceholder = document.body.appendChild(document.createElement('div'));
+    },
+
+    removePreviewPlaceholder() {
+        if (!this.previewPlaceholder) {
+            return;
+        }
+
+        document.body.removeChild(this.previewPlaceholder);
+        this.previewPlaceholder = null;
     },
 
     renderMagnifier() {
         const smallImage = ReactDOM.findDOMNode(this).getBoundingClientRect();
         const { zoomImage, previewWidth, previewHeight } = this.props;
-        const { x, y, zoomImageDimensions, isActive, isImageLoaded } = this.state;
+        const { x, y, zoomImageDimensions, isActive, isImageLoaded, isScrolling } = this.state;
 
-        if (!isActive || !isImageLoaded) {
+        if (!isActive || !isImageLoaded || isScrolling) {
             this.removeMagnifier();
             return;
         }
@@ -177,7 +212,7 @@ export default React.createClass({
                 height={previewHeight}
                 position={previewPosition}
             />,
-            this.refs.preview
+            this.previewPlaceholder
         );
     },
 
@@ -207,7 +242,6 @@ export default React.createClass({
                     { content }
                     <div ref="lens"></div>
                 </div>
-                <div ref="preview"></div>
             </div>
         );
     }
