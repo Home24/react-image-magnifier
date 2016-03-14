@@ -79,10 +79,8 @@ export default React.createClass({
         document.addEventListener('mousemove', this.onMouseMove);
         window.addEventListener('scroll', this.onScrollFinish);
         window.addEventListener('scroll', this.onScrollStart);
-    },
 
-    onClick() {
-        this.setState({ isActive: !this.state.isActive });
+        this.setState({ isActive: true });
     },
 
     onTouchStart(event) {
@@ -96,6 +94,7 @@ export default React.createClass({
         window.removeEventListener('scroll', this.onScrollFinish);
         window.removeEventListener('scroll', this.onScrollStart);
 
+        this.setState({ isActive: false });
     },
 
     onMouseMove(e) {
@@ -114,14 +113,12 @@ export default React.createClass({
         const el = this.refs.stage;
         el.addEventListener('mouseenter', this.onEnter);
         el.addEventListener('mouseleave', this.onLeave);
-        el.addEventListener('click', this.onClick);
     },
     
     unbindEvents() {
         const el = this.refs.stage;
         el.removeEventListener('mouseenter', this.onEnter);
         el.removeEventListener('mouseleave', this.onLeave);
-        el.removeEventListener('click', this.onClick);
     },
 
     loadImage(src) {
@@ -218,14 +215,10 @@ export default React.createClass({
 
     render() {
         const { smallImage, children, loadingClassName } = this.props;
-        const { isImageLoaded, isActive } = this.state;
+        const { isImageLoaded } = this.state;
 
         const className = isImageLoaded ? '' : (loadingClassName || '');
         const style = { position: 'relative' };
-
-        if (isImageLoaded) {
-            style.cursor = isActive ? 'zoom-out' : 'zoom-in';
-        }
 
         let content;
 

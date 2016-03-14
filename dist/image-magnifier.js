@@ -102,9 +102,8 @@ exports.default = _react2.default.createClass({
         document.addEventListener('mousemove', this.onMouseMove);
         window.addEventListener('scroll', this.onScrollFinish);
         window.addEventListener('scroll', this.onScrollStart);
-    },
-    onClick: function onClick() {
-        this.setState({ isActive: !this.state.isActive });
+
+        this.setState({ isActive: true });
     },
     onTouchStart: function onTouchStart(event) {
         // prevent touch actions
@@ -115,6 +114,8 @@ exports.default = _react2.default.createClass({
         document.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('scroll', this.onScrollFinish);
         window.removeEventListener('scroll', this.onScrollStart);
+
+        this.setState({ isActive: false });
     },
     onMouseMove: function onMouseMove(e) {
         this.setState({ x: e.clientX, y: e.clientY });
@@ -129,13 +130,11 @@ exports.default = _react2.default.createClass({
         var el = this.refs.stage;
         el.addEventListener('mouseenter', this.onEnter);
         el.addEventListener('mouseleave', this.onLeave);
-        el.addEventListener('click', this.onClick);
     },
     unbindEvents: function unbindEvents() {
         var el = this.refs.stage;
         el.removeEventListener('mouseenter', this.onEnter);
         el.removeEventListener('mouseleave', this.onLeave);
-        el.removeEventListener('click', this.onClick);
     },
     loadImage: function loadImage(src) {
         var _this = this;
@@ -240,16 +239,10 @@ exports.default = _react2.default.createClass({
         var smallImage = _props2.smallImage;
         var children = _props2.children;
         var loadingClassName = _props2.loadingClassName;
-        var _state2 = this.state;
-        var isImageLoaded = _state2.isImageLoaded;
-        var isActive = _state2.isActive;
+        var isImageLoaded = this.state.isImageLoaded;
 
         var className = isImageLoaded ? '' : loadingClassName || '';
         var style = { position: 'relative' };
-
-        if (isImageLoaded) {
-            style.cursor = isActive ? 'zoom-out' : 'zoom-in';
-        }
 
         var content = undefined;
 
