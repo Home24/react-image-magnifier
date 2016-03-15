@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 import Lens from './lens';
 import Preview from './preview';
 import calculatePositionStyles from './helpers/calculate-position-styles';
+import isTouchDevice from './helpers/is-touch-device';
 
 export default React.createClass({
 
@@ -49,6 +50,11 @@ export default React.createClass({
 
     componentDidMount() {
         this._isMounted = true;
+
+        if (isTouchDevice()) {
+            return;
+        }
+
         this.onScrollFinish = debounce(this.onScrollFinish, 200); // will be called in the end of scrolling
         this.onScrollStart = debounce(this.onScrollStart, 200, { leading: true, trailing: false }); // will be called on start of scrolling
 
@@ -65,6 +71,10 @@ export default React.createClass({
     },
 
     componentDidUpdate() {
+        if (isTouchDevice()) {
+            return;
+        }
+
         this.renderMagnifier();
     },
 
@@ -214,8 +224,13 @@ export default React.createClass({
     },
 
     render() {
+
         const { smallImage, children, loadingClassName } = this.props;
         const { isImageLoaded } = this.state;
+
+        if (isTouchDevice()) {
+            return children || null;
+        }
 
         const className = isImageLoaded ? '' : (loadingClassName || '');
         const style = { position: 'relative' };
@@ -230,7 +245,7 @@ export default React.createClass({
         }
         
         return (
-            <div onTouchStart={this.onTouchStart}>
+            <div>
                 <div className={className} style={style} ref="stage">
                     { content }
                     <div ref="lens"></div>

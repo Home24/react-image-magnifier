@@ -32,6 +32,10 @@ var _calculatePositionStyles = require('./helpers/calculate-position-styles');
 
 var _calculatePositionStyles2 = _interopRequireDefault(_calculatePositionStyles);
 
+var _isTouchDevice = require('./helpers/is-touch-device');
+
+var _isTouchDevice2 = _interopRequireDefault(_isTouchDevice);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
@@ -76,6 +80,11 @@ exports.default = _react2.default.createClass({
     },
     componentDidMount: function componentDidMount() {
         this._isMounted = true;
+
+        if ((0, _isTouchDevice2.default)()) {
+            return;
+        }
+
         this.onScrollFinish = (0, _debounce2.default)(this.onScrollFinish, 200); // will be called in the end of scrolling
         this.onScrollStart = (0, _debounce2.default)(this.onScrollStart, 200, { leading: true, trailing: false }); // will be called on start of scrolling
 
@@ -90,6 +99,10 @@ exports.default = _react2.default.createClass({
         }
     },
     componentDidUpdate: function componentDidUpdate() {
+        if ((0, _isTouchDevice2.default)()) {
+            return;
+        }
+
         this.renderMagnifier();
     },
     componentWillUnmount: function componentWillUnmount() {
@@ -241,6 +254,10 @@ exports.default = _react2.default.createClass({
         var loadingClassName = _props2.loadingClassName;
         var isImageLoaded = this.state.isImageLoaded;
 
+        if ((0, _isTouchDevice2.default)()) {
+            return children || null;
+        }
+
         var className = isImageLoaded ? '' : loadingClassName || '';
         var style = { position: 'relative' };
 
@@ -254,7 +271,7 @@ exports.default = _react2.default.createClass({
 
         return _react2.default.createElement(
             'div',
-            { onTouchStart: this.onTouchStart },
+            null,
             _react2.default.createElement(
                 'div',
                 { className: className, style: style, ref: 'stage' },

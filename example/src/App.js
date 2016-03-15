@@ -39,7 +39,7 @@ var App = React.createClass({
     render() {
         const { show, images } = this.state;
 
-        const component = show ? (
+        const component1 = show ? (
             <ImageMagnifier
                 smallImage={{ src: images.small, alt: 'alt' }}
                 zoomImage={{ src: images.big }}
@@ -49,12 +49,28 @@ var App = React.createClass({
             />
         ) : null;
 
+        const component2 = show ? (
+            <ImageMagnifier
+                zoomImage={{ src: images.big }}
+                previewWidth={300}
+                previewHeight={200}
+                loadingClassName="loading"
+            >
+                <img src={images.small} alt="alt"/>
+            </ImageMagnifier>
+        ) : null;
+
         return (
             <div>
-                {component}
-                <button onClick={this.toggleVisibility}>Toggle visibility</button>
-                <button onClick={this.changeImage}>Change Image</button>
-                <button onClick={this.reset}>Reset</button>
+                <nav>
+                    <button onClick={this.toggleVisibility}>Toggle visibility</button>
+                    <button onClick={this.changeImage}>Change Image</button>
+                    <button onClick={this.reset}>Reset</button>
+                </nav>
+                <h4>Component without children</h4>
+                {component1}
+                <h4>Component with children</h4>
+                {component2}
             </div>
         );
     }
