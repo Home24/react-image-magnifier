@@ -57,9 +57,7 @@ exports.default = _react2.default.createClass({
                 y: _react2.default.PropTypes.number
             }),
             src: _react2.default.PropTypes.string.isRequired
-        }).isRequired,
-
-        loadingClassName: _react2.default.PropTypes.string
+        }).isRequired
     },
 
     getDefaultProps: function getDefaultProps() {
@@ -93,6 +91,10 @@ exports.default = _react2.default.createClass({
         this.bindEvents();
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        if ((0, _isTouchDevice2.default)()) {
+            return;
+        }
+
         if (this.props.zoomImage !== nextProps.zoomImage) {
             this.setState({ isImageLoaded: false, isActive: false });
             this.loadImage(nextProps.zoomImage.src);
@@ -106,10 +108,15 @@ exports.default = _react2.default.createClass({
         this.renderMagnifier();
     },
     componentWillUnmount: function componentWillUnmount() {
+        this._isMounted = false;
+
+        if ((0, _isTouchDevice2.default)()) {
+            return;
+        }
+
         this.onLeave();
         this.unbindEvents();
         this.removePreviewPlaceholder();
-        this._isMounted = false;
     },
     onEnter: function onEnter() {
         document.addEventListener('mousemove', this.onMouseMove);
@@ -251,14 +258,7 @@ exports.default = _react2.default.createClass({
         var _props2 = this.props;
         var smallImage = _props2.smallImage;
         var children = _props2.children;
-        var loadingClassName = _props2.loadingClassName;
-        var isImageLoaded = this.state.isImageLoaded;
 
-        if ((0, _isTouchDevice2.default)()) {
-            return children || null;
-        }
-
-        var className = isImageLoaded ? '' : loadingClassName || '';
         var style = { position: 'relative' };
 
         var content = undefined;
@@ -274,7 +274,7 @@ exports.default = _react2.default.createClass({
             null,
             _react2.default.createElement(
                 'div',
-                { className: className, style: style, ref: 'stage' },
+                { style: style, ref: 'stage' },
                 content,
                 _react2.default.createElement('div', { ref: 'lens' })
             )

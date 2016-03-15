@@ -25,9 +25,7 @@ export default React.createClass({
                 y: React.PropTypes.number
             }),
             src: React.PropTypes.string.isRequired
-        }).isRequired,
-
-        loadingClassName: React.PropTypes.string
+        }).isRequired
     },
 
     getDefaultProps() {
@@ -64,6 +62,10 @@ export default React.createClass({
     },
 
     componentWillReceiveProps(nextProps) {
+        if (isTouchDevice()) {
+            return;
+        }
+
         if (this.props.zoomImage !== nextProps.zoomImage) {
             this.setState({ isImageLoaded: false, isActive: false });
             this.loadImage(nextProps.zoomImage.src);
@@ -79,10 +81,15 @@ export default React.createClass({
     },
 
     componentWillUnmount() {
+        this._isMounted = false;
+
+        if (isTouchDevice()) {
+            return;
+        }
+
         this.onLeave();
         this.unbindEvents();
         this.removePreviewPlaceholder();
-        this._isMounted = false;
     },
 
     onEnter() {
@@ -224,15 +231,7 @@ export default React.createClass({
     },
 
     render() {
-
-        const { smallImage, children, loadingClassName } = this.props;
-        const { isImageLoaded } = this.state;
-
-        if (isTouchDevice()) {
-            return children || null;
-        }
-
-        const className = isImageLoaded ? '' : (loadingClassName || '');
+        const { smallImage, children } = this.props;
         const style = { position: 'relative' };
 
         let content;
@@ -246,7 +245,7 @@ export default React.createClass({
         
         return (
             <div>
-                <div className={className} style={style} ref="stage">
+                <div style={style} ref="stage">
                     { content }
                     <div ref="lens"></div>
                 </div>
