@@ -100,11 +100,6 @@ export default React.createClass({
         this.setState({ isActive: true });
     },
 
-    onTouchStart(event) {
-        // prevent touch actions
-        event.preventDefault();
-    },
-
     onLeave() {
         this.removeMagnifier();
         document.removeEventListener('mousemove', this.onMouseMove);

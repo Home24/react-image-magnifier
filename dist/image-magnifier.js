@@ -125,10 +125,6 @@ exports.default = _react2.default.createClass({
 
         this.setState({ isActive: true });
     },
-    onTouchStart: function onTouchStart(event) {
-        // prevent touch actions
-        event.preventDefault();
-    },
     onLeave: function onLeave() {
         this.removeMagnifier();
         document.removeEventListener('mousemove', this.onMouseMove);
