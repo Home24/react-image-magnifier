@@ -32,6 +32,10 @@ var _calculatePositionStyles = require('./helpers/calculate-position-styles');
 
 var _calculatePositionStyles2 = _interopRequireDefault(_calculatePositionStyles);
 
+var _isTouchDevice = require('./helpers/is-touch-device');
+
+var _isTouchDevice2 = _interopRequireDefault(_isTouchDevice);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
@@ -53,9 +57,7 @@ exports.default = _react2.default.createClass({
                 y: _react2.default.PropTypes.number
             }),
             src: _react2.default.PropTypes.string.isRequired
-        }).isRequired,
-
-        loadingClassName: _react2.default.PropTypes.string
+        }).isRequired
     },
 
     getDefaultProps: function getDefaultProps() {
@@ -76,6 +78,11 @@ exports.default = _react2.default.createClass({
     },
     componentDidMount: function componentDidMount() {
         this._isMounted = true;
+
+        if ((0, _isTouchDevice2.default)()) {
+            return;
+        }
+
         this.onScrollFinish = (0, _debounce2.default)(this.onScrollFinish, 200); // will be called in the end of scrolling
         this.onScrollStart = (0, _debounce2.default)(this.onScrollStart, 200, { leading: true, trailing: false }); // will be called on start of scrolling
 
@@ -84,37 +91,47 @@ exports.default = _react2.default.createClass({
         this.bindEvents();
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        if ((0, _isTouchDevice2.default)()) {
+            return;
+        }
+
         if (this.props.zoomImage !== nextProps.zoomImage) {
             this.setState({ isImageLoaded: false, isActive: false });
             this.loadImage(nextProps.zoomImage.src);
         }
     },
     componentDidUpdate: function componentDidUpdate() {
+        if ((0, _isTouchDevice2.default)()) {
+            return;
+        }
+
         this.renderMagnifier();
     },
     componentWillUnmount: function componentWillUnmount() {
+        this._isMounted = false;
+
+        if ((0, _isTouchDevice2.default)()) {
+            return;
+        }
+
         this.onLeave();
         this.unbindEvents();
         this.removePreviewPlaceholder();
-        this._isMounted = false;
     },
     onEnter: function onEnter() {
         document.addEventListener('mousemove', this.onMouseMove);
         window.addEventListener('scroll', this.onScrollFinish);
         window.addEventListener('scroll', this.onScrollStart);
-    },
-    onClick: function onClick() {
-        this.setState({ isActive: !this.state.isActive });
-    },
-    onTouchStart: function onTouchStart(event) {
-        // prevent touch actions
-        event.preventDefault();
+
+        this.setState({ isActive: true });
     },
     onLeave: function onLeave() {
         this.removeMagnifier();
         document.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('scroll', this.onScrollFinish);
         window.removeEventListener('scroll', this.onScrollStart);
+
+        this.setState({ isActive: false });
     },
     onMouseMove: function onMouseMove(e) {
         this.setState({ x: e.clientX, y: e.clientY });
@@ -129,13 +146,11 @@ exports.default = _react2.default.createClass({
         var el = this.refs.stage;
         el.addEventListener('mouseenter', this.onEnter);
         el.addEventListener('mouseleave', this.onLeave);
-        el.addEventListener('click', this.onClick);
     },
     unbindEvents: function unbindEvents() {
         var el = this.refs.stage;
         el.removeEventListener('mouseenter', this.onEnter);
         el.removeEventListener('mouseleave', this.onLeave);
-        el.removeEventListener('click', this.onClick);
     },
     loadImage: function loadImage(src) {
         var _this = this;
@@ -239,17 +254,8 @@ exports.default = _react2.default.createClass({
         var _props2 = this.props;
         var smallImage = _props2.smallImage;
         var children = _props2.children;
-        var loadingClassName = _props2.loadingClassName;
-        var _state2 = this.state;
-        var isImageLoaded = _state2.isImageLoaded;
-        var isActive = _state2.isActive;
 
-        var className = isImageLoaded ? '' : loadingClassName || '';
         var style = { position: 'relative' };
-
-        if (isImageLoaded) {
-            style.cursor = isActive ? 'zoom-out' : 'zoom-in';
-        }
 
         var content = undefined;
 
@@ -261,10 +267,10 @@ exports.default = _react2.default.createClass({
 
         return _react2.default.createElement(
             'div',
-            { onTouchStart: this.onTouchStart },
+            null,
             _react2.default.createElement(
                 'div',
-                { className: className, style: style, ref: 'stage' },
+                { style: style, ref: 'stage' },
                 content,
                 _react2.default.createElement('div', { ref: 'lens' })
             )

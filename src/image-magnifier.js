@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 import Lens from './lens';
 import Preview from './preview';
 import calculatePositionStyles from './helpers/calculate-position-styles';
+import isTouchDevice from './helpers/is-touch-device';
 
 export default React.createClass({
 
@@ -24,9 +25,7 @@ export default React.createClass({
                 y: React.PropTypes.number
             }),
             src: React.PropTypes.string.isRequired
-        }).isRequired,
-
-        loadingClassName: React.PropTypes.string
+        }).isRequired
     },
 
     getDefaultProps() {
@@ -49,6 +48,11 @@ export default React.createClass({
 
     componentDidMount() {
         this._isMounted = true;
+
+        if (isTouchDevice()) {
+            return;
+        }
+
         this.onScrollFinish = debounce(this.onScrollFinish, 200); // will be called in the end of scrolling
         this.onScrollStart = debounce(this.onScrollStart, 200, { leading: true, trailing: false }); // will be called on start of scrolling
 
@@ -58,6 +62,10 @@ export default React.createClass({
     },
 
     componentWillReceiveProps(nextProps) {
+        if (isTouchDevice()) {
+            return;
+        }
+
         if (this.props.zoomImage !== nextProps.zoomImage) {
             this.setState({ isImageLoaded: false, isActive: false });
             this.loadImage(nextProps.zoomImage.src);
@@ -65,29 +73,31 @@ export default React.createClass({
     },
 
     componentDidUpdate() {
+        if (isTouchDevice()) {
+            return;
+        }
+
         this.renderMagnifier();
     },
 
     componentWillUnmount() {
+        this._isMounted = false;
+
+        if (isTouchDevice()) {
+            return;
+        }
+
         this.onLeave();
         this.unbindEvents();
         this.removePreviewPlaceholder();
-        this._isMounted = false;
     },
 
     onEnter() {
         document.addEventListener('mousemove', this.onMouseMove);
         window.addEventListener('scroll', this.onScrollFinish);
         window.addEventListener('scroll', this.onScrollStart);
-    },
 
-    onClick() {
-        this.setState({ isActive: !this.state.isActive });
-    },
-
-    onTouchStart(event) {
-        // prevent touch actions
-        event.preventDefault();
+        this.setState({ isActive: true });
     },
 
     onLeave() {
@@ -96,6 +106,7 @@ export default React.createClass({
         window.removeEventListener('scroll', this.onScrollFinish);
         window.removeEventListener('scroll', this.onScrollStart);
 
+        this.setState({ isActive: false });
     },
 
     onMouseMove(e) {
@@ -114,14 +125,12 @@ export default React.createClass({
         const el = this.refs.stage;
         el.addEventListener('mouseenter', this.onEnter);
         el.addEventListener('mouseleave', this.onLeave);
-        el.addEventListener('click', this.onClick);
     },
     
     unbindEvents() {
         const el = this.refs.stage;
         el.removeEventListener('mouseenter', this.onEnter);
         el.removeEventListener('mouseleave', this.onLeave);
-        el.removeEventListener('click', this.onClick);
     },
 
     loadImage(src) {
@@ -217,15 +226,8 @@ export default React.createClass({
     },
 
     render() {
-        const { smallImage, children, loadingClassName } = this.props;
-        const { isImageLoaded, isActive } = this.state;
-
-        const className = isImageLoaded ? '' : (loadingClassName || '');
+        const { smallImage, children } = this.props;
         const style = { position: 'relative' };
-
-        if (isImageLoaded) {
-            style.cursor = isActive ? 'zoom-out' : 'zoom-in';
-        }
 
         let content;
 
@@ -237,8 +239,8 @@ export default React.createClass({
         }
         
         return (
-            <div onTouchStart={this.onTouchStart}>
-                <div className={className} style={style} ref="stage">
+            <div>
+                <div style={style} ref="stage">
                     { content }
                     <div ref="lens"></div>
                 </div>
