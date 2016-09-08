@@ -13,6 +13,7 @@ export default React.createClass({
         previewWidth: React.PropTypes.number,
         previewHeight: React.PropTypes.number,
 
+        delay: React.PropTypes.number,
         children: React.PropTypes.element,
 
         smallImage: React.PropTypes.shape({
@@ -97,11 +98,22 @@ export default React.createClass({
         window.addEventListener('scroll', this.onScrollFinish);
         window.addEventListener('scroll', this.onScrollStart);
 
-        this.setState({ isActive: true });
+        const handler = () => {
+            this.setState({ isActive: true });
+        };
+
+        if (this.props.delay) {
+            this.waitTimeoutId = setTimeout(handler, this.props.delay);
+        } else {
+            handler();
+        }
     },
 
     onLeave() {
+        clearTimeout(this.waitTimeoutId);
+
         this.removeMagnifier();
+
         document.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('scroll', this.onScrollFinish);
         window.removeEventListener('scroll', this.onScrollStart);

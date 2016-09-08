@@ -41,10 +41,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _react2.default.createClass({
     displayName: 'image-magnifier',
 
+
     propTypes: {
         previewWidth: _react2.default.PropTypes.number,
         previewHeight: _react2.default.PropTypes.number,
 
+        delay: _react2.default.PropTypes.number,
         children: _react2.default.PropTypes.element,
 
         smallImage: _react2.default.PropTypes.shape({
@@ -119,14 +121,27 @@ exports.default = _react2.default.createClass({
         this.removePreviewPlaceholder();
     },
     onEnter: function onEnter() {
+        var _this = this;
+
         document.addEventListener('mousemove', this.onMouseMove);
         window.addEventListener('scroll', this.onScrollFinish);
         window.addEventListener('scroll', this.onScrollStart);
 
-        this.setState({ isActive: true });
+        var handler = function handler() {
+            _this.setState({ isActive: true });
+        };
+
+        if (this.props.delay) {
+            this.waitTimeoutId = setTimeout(handler, this.props.delay);
+        } else {
+            handler();
+        }
     },
     onLeave: function onLeave() {
+        clearTimeout(this.waitTimeoutId);
+
         this.removeMagnifier();
+
         document.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('scroll', this.onScrollFinish);
         window.removeEventListener('scroll', this.onScrollStart);
@@ -153,12 +168,12 @@ exports.default = _react2.default.createClass({
         el.removeEventListener('mouseleave', this.onLeave);
     },
     loadImage: function loadImage(src) {
-        var _this = this;
+        var _this2 = this;
 
         var img = new Image();
 
         img.onload = function (event) {
-            if (!_this._isMounted) {
+            if (!_this2._isMounted) {
                 return;
             }
 
@@ -166,11 +181,12 @@ exports.default = _react2.default.createClass({
             var width = _event$currentTarget.width;
             var height = _event$currentTarget.height;
 
-            _this.handleImageLoad(width, height);
+            _this2.handleImageLoad(width, height);
         };
 
         img.src = src;
     },
+
 
     _isMounted: false,
 
@@ -211,6 +227,7 @@ exports.default = _react2.default.createClass({
         var isImageLoaded = _state.isImageLoaded;
         var isScrolling = _state.isScrolling;
 
+
         if (!isActive || !isImageLoaded || isScrolling) {
             this.removeMagnifier();
             return;
@@ -236,6 +253,7 @@ exports.default = _react2.default.createClass({
         var rectanglePosition = _calculatePositionSty.rectanglePosition;
         var previewPosition = _calculatePositionSty.previewPosition;
 
+
         _reactDom2.default.render(_react2.default.createElement(_lens2.default, {
             width: rectangleWidth,
             height: rectangleHeight,
@@ -257,7 +275,7 @@ exports.default = _react2.default.createClass({
 
         var style = { position: 'relative' };
 
-        var content = undefined;
+        var content = void 0;
 
         if (smallImage) {
             content = _react2.default.createElement('img', { src: smallImage.src, alt: smallImage.alt });

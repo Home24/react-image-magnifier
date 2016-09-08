@@ -1,6 +1,6 @@
 {
   "name": "react-image-magnifier",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "HOME24 fork. A react component that accepts a high-res source image and produces a magnifier window on mouse hover over the part of the image the cursor is over",
   "main": "dist/image-magnifier.js",
   "scripts": {
