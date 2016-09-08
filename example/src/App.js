@@ -12,6 +12,7 @@ var App = React.createClass({
     getInitialState() {
         return {
             show: true,
+            delay: 0,
             images: {
                 small: 'img/bed-small.jpg',
                 big: 'img/bed-large.jpg'
@@ -32,12 +33,18 @@ var App = React.createClass({
         });
     },
 
+    changeDelay(e) {
+        this.setState({
+            delay: parseInt(e.currentTarget.value, 10)
+        })
+    },
+
     reset() {
         this.setState(this.getInitialState());
     },
 
     render() {
-        const { show, images } = this.state;
+        const { show, images, delay } = this.state;
 
         const component1 = show ? (
             <ImageMagnifier
@@ -45,6 +52,7 @@ var App = React.createClass({
                 zoomImage={{ src: images.big }}
                 previewWidth={300}
                 previewHeight={200}
+                delay={delay}
                 loadingClassName="loading"
             />
         ) : null;
@@ -54,6 +62,7 @@ var App = React.createClass({
                 zoomImage={{ src: images.big }}
                 previewWidth={300}
                 previewHeight={200}
+                delay={delay}
                 loadingClassName="loading"
             >
                 <img src={images.small} alt="alt"/>
@@ -65,6 +74,18 @@ var App = React.createClass({
                 <nav>
                     <button onClick={this.toggleVisibility}>Toggle visibility</button>
                     <button onClick={this.changeImage}>Change Image</button>
+                    <span className="delay">
+                        Change delay
+                        <input
+                            type="range"
+                            onChange={this.changeDelay}
+                            value={delay}
+                            min={0}
+                            max={2000}
+                            step={100}
+                        />
+                        ({delay})
+                    </span>
                     <button onClick={this.reset}>Reset</button>
                 </nav>
                 <h4>Component without children</h4>
@@ -78,40 +99,3 @@ var App = React.createClass({
 
 ReactDOM.render(<App />, document.getElementById('mount'));
 
-//<ImageMagnifier
-//    image={{
-//        src: "img/cat-small.jpg",
-//        width: 400,
-//        height: 300
-//    }}
-//    zoomImage={{
-//        src: "img/cat-large.jpg",
-//        width: 1024,
-//        height: 768
-//    }}
-///>
-//<ImageMagnifier
-//    image={{
-//        src: "img/beach-small.jpg",
-//        width: 400,
-//        height: 300
-//    }}
-//    zoomImage={{
-//        src: "img/beach-large.jpg",
-//        width: 1600,
-//        height: 1200
-//    }}
-//    cursorOffset={{ x: 80, y: -80 }}
-///>
-//<ImageMagnifier
-//    image={{
-//        src: "img/fall-small.jpg",
-//        width: 400,
-//        height: 250
-//    }}
-//    zoomImage={{
-//        src: "img/fall-large.jpg",
-//        width: 1920,
-//        height: 1200
-//    }}
-///>

@@ -17,6 +17,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _react2.default.createClass({
     displayName: 'lens',
 
+
     propTypes: {
 
         // the size of the magnifier window
@@ -37,6 +38,7 @@ exports.default = _react2.default.createClass({
         var width = _props.width;
         var height = _props.height;
         var position = _props.position;
+
 
         var styles = {
             position: 'absolute',

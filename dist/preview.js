@@ -13,6 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _react2.default.createClass({
     displayName: 'preview',
 
+
     propTypes: {
         width: _react2.default.PropTypes.number.isRequired,
         height: _react2.default.PropTypes.number.isRequired,
@@ -48,6 +49,7 @@ exports.default = _react2.default.createClass({
         var position = _props.position;
         var smallImage = _props.smallImage;
         var zoomImage = _props.zoomImage;
+
 
         var previewStyles = {
             position: 'fixed',
