@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -15,40 +19,40 @@ exports.default = _react2.default.createClass({
 
 
     propTypes: {
-        width: _react2.default.PropTypes.number.isRequired,
-        height: _react2.default.PropTypes.number.isRequired,
+        width: _propTypes2.default.number.isRequired,
+        height: _propTypes2.default.number.isRequired,
 
         // the position of the preview
-        position: _react2.default.PropTypes.shape({
-            bgVertical: _react2.default.PropTypes.string.isRequired,
-            bgHorizontal: _react2.default.PropTypes.string.isRequired
+        position: _propTypes2.default.shape({
+            bgVertical: _propTypes2.default.string.isRequired,
+            bgHorizontal: _propTypes2.default.string.isRequired
         }).isRequired,
 
         // the size of the non-zoomed-in image
-        smallImage: _react2.default.PropTypes.shape({
-            bottom: _react2.default.PropTypes.number.isRequired,
-            left: _react2.default.PropTypes.number.isRequired,
-            top: _react2.default.PropTypes.number.isRequired,
-            right: _react2.default.PropTypes.number.isRequired
+        smallImage: _propTypes2.default.shape({
+            bottom: _propTypes2.default.number.isRequired,
+            left: _propTypes2.default.number.isRequired,
+            top: _propTypes2.default.number.isRequired,
+            right: _propTypes2.default.number.isRequired
         }).isRequired,
 
         // the size of the zoomed-in image
-        zoomImage: _react2.default.PropTypes.shape({
-            src: _react2.default.PropTypes.string.isRequired,
-            offset: _react2.default.PropTypes.shape({
-                x: _react2.default.PropTypes.number,
-                y: _react2.default.PropTypes.number
+        zoomImage: _propTypes2.default.shape({
+            src: _propTypes2.default.string.isRequired,
+            offset: _propTypes2.default.shape({
+                x: _propTypes2.default.number,
+                y: _propTypes2.default.number
             })
         }).isRequired
     },
 
     render: function render() {
-        var _props = this.props;
-        var width = _props.width;
-        var height = _props.height;
-        var position = _props.position;
-        var smallImage = _props.smallImage;
-        var zoomImage = _props.zoomImage;
+        var _props = this.props,
+            width = _props.width,
+            height = _props.height,
+            position = _props.position,
+            smallImage = _props.smallImage,
+            zoomImage = _props.zoomImage;
 
 
         var previewStyles = {

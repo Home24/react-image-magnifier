@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import assign from 'lodash/assign';
@@ -10,22 +11,22 @@ import isTouchDevice from './helpers/is-touch-device';
 export default React.createClass({
 
     propTypes: {
-        previewWidth: React.PropTypes.number,
-        previewHeight: React.PropTypes.number,
+        previewWidth: PropTypes.number,
+        previewHeight: PropTypes.number,
 
-        delay: React.PropTypes.number,
-        children: React.PropTypes.element,
+        delay: PropTypes.number,
+        children: PropTypes.element,
 
-        smallImage: React.PropTypes.shape({
-            src: React.PropTypes.string.isRequired,
-            alt: React.PropTypes.string.isRequired
+        smallImage: PropTypes.shape({
+            src: PropTypes.string.isRequired,
+            alt: PropTypes.string.isRequired
         }),
-        zoomImage: React.PropTypes.shape({
-            offset: React.PropTypes.shape({
-                x: React.PropTypes.number,
-                y: React.PropTypes.number
+        zoomImage: PropTypes.shape({
+            offset: PropTypes.shape({
+                x: PropTypes.number,
+                y: PropTypes.number
             }),
-            src: React.PropTypes.string.isRequired
+            src: PropTypes.string.isRequired
         }).isRequired
     },
 

@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -21,23 +25,23 @@ exports.default = _react2.default.createClass({
     propTypes: {
 
         // the size of the magnifier window
-        width: _react2.default.PropTypes.number.isRequired,
-        height: _react2.default.PropTypes.number.isRequired,
+        width: _propTypes2.default.number.isRequired,
+        height: _propTypes2.default.number.isRequired,
 
         // the position of the lens relative to the image
-        position: _react2.default.PropTypes.shape({
-            top: _react2.default.PropTypes.number.isRequired,
-            left: _react2.default.PropTypes.number.isRequired,
-            marginLeft: _react2.default.PropTypes.number,
-            marginTop: _react2.default.PropTypes.number
+        position: _propTypes2.default.shape({
+            top: _propTypes2.default.number.isRequired,
+            left: _propTypes2.default.number.isRequired,
+            marginLeft: _propTypes2.default.number,
+            marginTop: _propTypes2.default.number
         }).isRequired
     },
 
     render: function render() {
-        var _props = this.props;
-        var width = _props.width;
-        var height = _props.height;
-        var position = _props.position;
+        var _props = this.props,
+            width = _props.width,
+            height = _props.height,
+            position = _props.position;
 
 
         var styles = {

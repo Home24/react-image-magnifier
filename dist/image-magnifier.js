@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -43,22 +47,22 @@ exports.default = _react2.default.createClass({
 
 
     propTypes: {
-        previewWidth: _react2.default.PropTypes.number,
-        previewHeight: _react2.default.PropTypes.number,
+        previewWidth: _propTypes2.default.number,
+        previewHeight: _propTypes2.default.number,
 
-        delay: _react2.default.PropTypes.number,
-        children: _react2.default.PropTypes.element,
+        delay: _propTypes2.default.number,
+        children: _propTypes2.default.element,
 
-        smallImage: _react2.default.PropTypes.shape({
-            src: _react2.default.PropTypes.string.isRequired,
-            alt: _react2.default.PropTypes.string.isRequired
+        smallImage: _propTypes2.default.shape({
+            src: _propTypes2.default.string.isRequired,
+            alt: _propTypes2.default.string.isRequired
         }),
-        zoomImage: _react2.default.PropTypes.shape({
-            offset: _react2.default.PropTypes.shape({
-                x: _react2.default.PropTypes.number,
-                y: _react2.default.PropTypes.number
+        zoomImage: _propTypes2.default.shape({
+            offset: _propTypes2.default.shape({
+                x: _propTypes2.default.number,
+                y: _propTypes2.default.number
             }),
-            src: _react2.default.PropTypes.string.isRequired
+            src: _propTypes2.default.string.isRequired
         }).isRequired
     },
 
@@ -177,9 +181,9 @@ exports.default = _react2.default.createClass({
                 return;
             }
 
-            var _event$currentTarget = event.currentTarget;
-            var width = _event$currentTarget.width;
-            var height = _event$currentTarget.height;
+            var _event$currentTarget = event.currentTarget,
+                width = _event$currentTarget.width,
+                height = _event$currentTarget.height;
 
             _this2.handleImageLoad(width, height);
         };
@@ -215,17 +219,17 @@ exports.default = _react2.default.createClass({
     },
     renderMagnifier: function renderMagnifier() {
         var smallImage = _reactDom2.default.findDOMNode(this).getBoundingClientRect();
-        var _props = this.props;
-        var zoomImage = _props.zoomImage;
-        var previewWidth = _props.previewWidth;
-        var previewHeight = _props.previewHeight;
-        var _state = this.state;
-        var x = _state.x;
-        var y = _state.y;
-        var zoomImageDimensions = _state.zoomImageDimensions;
-        var isActive = _state.isActive;
-        var isImageLoaded = _state.isImageLoaded;
-        var isScrolling = _state.isScrolling;
+        var _props = this.props,
+            zoomImage = _props.zoomImage,
+            previewWidth = _props.previewWidth,
+            previewHeight = _props.previewHeight;
+        var _state = this.state,
+            x = _state.x,
+            y = _state.y,
+            zoomImageDimensions = _state.zoomImageDimensions,
+            isActive = _state.isActive,
+            isImageLoaded = _state.isImageLoaded,
+            isScrolling = _state.isScrolling;
 
 
         if (!isActive || !isImageLoaded || isScrolling) {
@@ -248,11 +252,9 @@ exports.default = _react2.default.createClass({
 
         // previews rectangles
 
-        var _calculatePositionSty = (0, _calculatePositionStyles2.default)({ x: x, y: y, smallImage: smallImage, rectangleHeight: rectangleHeight, rectangleWidth: rectangleWidth, previewDiffX: previewDiffX, previewDiffY: previewDiffY });
-
-        var rectanglePosition = _calculatePositionSty.rectanglePosition;
-        var previewPosition = _calculatePositionSty.previewPosition;
-
+        var _calculatePositionSty = (0, _calculatePositionStyles2.default)({ x: x, y: y, smallImage: smallImage, rectangleHeight: rectangleHeight, rectangleWidth: rectangleWidth, previewDiffX: previewDiffX, previewDiffY: previewDiffY }),
+            rectanglePosition = _calculatePositionSty.rectanglePosition,
+            previewPosition = _calculatePositionSty.previewPosition;
 
         _reactDom2.default.render(_react2.default.createElement(_lens2.default, {
             width: rectangleWidth,
@@ -269,9 +271,9 @@ exports.default = _react2.default.createClass({
         }), this.previewPlaceholder);
     },
     render: function render() {
-        var _props2 = this.props;
-        var smallImage = _props2.smallImage;
-        var children = _props2.children;
+        var _props2 = this.props,
+            smallImage = _props2.smallImage,
+            children = _props2.children;
 
         var style = { position: 'relative' };
 

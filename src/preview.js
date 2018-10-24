@@ -1,31 +1,32 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 export default React.createClass({
 
     propTypes: {
-        width: React.PropTypes.number.isRequired,
-        height: React.PropTypes.number.isRequired,
+        width: PropTypes.number.isRequired,
+        height: PropTypes.number.isRequired,
 
         // the position of the preview
-        position: React.PropTypes.shape({
-            bgVertical: React.PropTypes.string.isRequired,
-            bgHorizontal: React.PropTypes.string.isRequired
+        position: PropTypes.shape({
+            bgVertical: PropTypes.string.isRequired,
+            bgHorizontal: PropTypes.string.isRequired
         }).isRequired,
 
         // the size of the non-zoomed-in image
-        smallImage: React.PropTypes.shape({
-            bottom: React.PropTypes.number.isRequired,
-            left: React.PropTypes.number.isRequired,
-            top: React.PropTypes.number.isRequired,
-            right: React.PropTypes.number.isRequired
+        smallImage: PropTypes.shape({
+            bottom: PropTypes.number.isRequired,
+            left: PropTypes.number.isRequired,
+            top: PropTypes.number.isRequired,
+            right: PropTypes.number.isRequired
         }).isRequired,
 
         // the size of the zoomed-in image
-        zoomImage: React.PropTypes.shape({
-            src: React.PropTypes.string.isRequired,
-            offset: React.PropTypes.shape({
-                x: React.PropTypes.number,
-                y: React.PropTypes.number
+        zoomImage: PropTypes.shape({
+            src: PropTypes.string.isRequired,
+            offset: PropTypes.shape({
+                x: PropTypes.number,
+                y: PropTypes.number
             })
         }).isRequired
     },

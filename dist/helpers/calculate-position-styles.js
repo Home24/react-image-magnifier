@@ -5,19 +5,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (_ref) {
-    var x = _ref.x;
-    var y = _ref.y;
-    var smallImage = _ref.smallImage;
-    var rectangleHeight = _ref.rectangleHeight;
-    var rectangleWidth = _ref.rectangleWidth;
-    var previewDiffX = _ref.previewDiffX;
-    var previewDiffY = _ref.previewDiffY;
-    var left = smallImage.left;
-    var top = smallImage.top;
-    var right = smallImage.right;
-    var bottom = smallImage.bottom;
-    var height = smallImage.height;
-    var width = smallImage.width;
+    var x = _ref.x,
+        y = _ref.y,
+        smallImage = _ref.smallImage,
+        rectangleHeight = _ref.rectangleHeight,
+        rectangleWidth = _ref.rectangleWidth,
+        previewDiffX = _ref.previewDiffX,
+        previewDiffY = _ref.previewDiffY;
+    var left = smallImage.left,
+        top = smallImage.top,
+        right = smallImage.right,
+        bottom = smallImage.bottom,
+        height = smallImage.height,
+        width = smallImage.width;
 
     var rectangleHalfWidth = Math.floor(rectangleWidth / 2);
     var rectangleHalfHeight = Math.floor(rectangleHeight / 2);
