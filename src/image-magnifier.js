@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import assign from 'lodash/assign';
@@ -7,45 +8,40 @@ import Preview from './preview';
 import calculatePositionStyles from './helpers/calculate-position-styles';
 import isTouchDevice from './helpers/is-touch-device';
 
-export default React.createClass({
+export default class extends React.Component {
+    static propTypes = {
+        previewWidth: PropTypes.number,
+        previewHeight: PropTypes.number,
 
-    propTypes: {
-        previewWidth: React.PropTypes.number,
-        previewHeight: React.PropTypes.number,
+        delay: PropTypes.number,
+        children: PropTypes.element,
 
-        delay: React.PropTypes.number,
-        children: React.PropTypes.element,
-
-        smallImage: React.PropTypes.shape({
-            src: React.PropTypes.string.isRequired,
-            alt: React.PropTypes.string.isRequired
+        smallImage: PropTypes.shape({
+            src: PropTypes.string.isRequired,
+            alt: PropTypes.string.isRequired
         }),
-        zoomImage: React.PropTypes.shape({
-            offset: React.PropTypes.shape({
-                x: React.PropTypes.number,
-                y: React.PropTypes.number
+        zoomImage: PropTypes.shape({
+            offset: PropTypes.shape({
+                x: PropTypes.number,
+                y: PropTypes.number
             }),
-            src: React.PropTypes.string.isRequired
+            src: PropTypes.string.isRequired
         }).isRequired
-    },
+    };
 
-    getDefaultProps() {
-        return {
-            previewWidth: 200,
-            previewHeight: 200
-        };
-    },
+    static defaultProps = {
+        previewWidth: 200,
+        previewHeight: 200
+    };
 
-    getInitialState() {
-        return {
-            x: 0,
-            y: 0,
-            zoomImageDimensions: { width: 0, height: 0 },
-            isImageLoaded: false,
-            isActive: false,
-            isScrolling: false
-        };
-    },
+    state = {
+        x: 0,
+        y: 0,
+        zoomImageDimensions: { width: 0, height: 0 },
+        isImageLoaded: false,
+        isActive: false,
+        isScrolling: false
+    };
 
     componentDidMount() {
         this._isMounted = true;
@@ -60,7 +56,7 @@ export default React.createClass({
         this.appendPreviewPlaceholder();
         this.loadImage(this.props.zoomImage.src);
         this.bindEvents();
-    },
+    }
 
     componentWillReceiveProps(nextProps) {
         if (isTouchDevice()) {
@@ -71,7 +67,7 @@ export default React.createClass({
             this.setState({ isImageLoaded: false, isActive: false });
             this.loadImage(nextProps.zoomImage.src);
         }
-    },
+    }
 
     componentDidUpdate() {
         if (isTouchDevice()) {
@@ -79,7 +75,7 @@ export default React.createClass({
         }
 
         this.renderMagnifier();
-    },
+    }
 
     componentWillUnmount() {
         this._isMounted = false;
@@ -91,9 +87,9 @@ export default React.createClass({
         this.onLeave();
         this.unbindEvents();
         this.removePreviewPlaceholder();
-    },
+    }
 
-    onEnter() {
+    onEnter = () => {
         document.addEventListener('mousemove', this.onMouseMove);
         window.addEventListener('scroll', this.onScrollFinish);
         window.addEventListener('scroll', this.onScrollStart);
@@ -107,9 +103,9 @@ export default React.createClass({
         } else {
             handler();
         }
-    },
+    };
 
-    onLeave() {
+    onLeave = () => {
         clearTimeout(this.waitTimeoutId);
 
         this.removeMagnifier();
@@ -119,33 +115,33 @@ export default React.createClass({
         window.removeEventListener('scroll', this.onScrollStart);
 
         this.setState({ isActive: false });
-    },
+    };
 
-    onMouseMove(e) {
+    onMouseMove = (e) => {
         this.setState({ x: e.clientX, y: e.clientY });
-    },
+    };
 
-    onScrollFinish() {
+    onScrollFinish = () => {
         this.setState({ isScrolling: false });
-    },
+    };
 
-    onScrollStart() {
+    onScrollStart = () => {
         this.setState({ isScrolling: true });
-    },
+    };
 
-    bindEvents() {
+    bindEvents = () => {
         const el = this.refs.stage;
         el.addEventListener('mouseenter', this.onEnter);
         el.addEventListener('mouseleave', this.onLeave);
-    },
-    
-    unbindEvents() {
+    };
+
+    unbindEvents = () => {
         const el = this.refs.stage;
         el.removeEventListener('mouseenter', this.onEnter);
         el.removeEventListener('mouseleave', this.onLeave);
-    },
+    };
 
-    loadImage(src) {
+    loadImage = (src) => {
         const img = new Image();
 
         img.onload = (event) => {
@@ -158,38 +154,37 @@ export default React.createClass({
         };
 
         img.src = src;
-    },
+    };
 
-    _isMounted: false,
+    _isMounted = false;
+    previewPlaceholder = null;
 
-    previewPlaceholder: null,
-
-    handleImageLoad(width, height) {
+    handleImageLoad = (width, height) => {
         this.setState({
             zoomImageDimensions: { width, height },
             isImageLoaded: true
         });
-    },
+    };
 
-    removeMagnifier() {
+    removeMagnifier = () => {
         ReactDOM.unmountComponentAtNode(this.refs.lens);
         ReactDOM.unmountComponentAtNode(this.previewPlaceholder);
-    },
+    };
 
-    appendPreviewPlaceholder() {
+    appendPreviewPlaceholder = () => {
         this.previewPlaceholder = document.body.appendChild(document.createElement('div'));
-    },
+    };
 
-    removePreviewPlaceholder() {
+    removePreviewPlaceholder = () => {
         if (!this.previewPlaceholder) {
             return;
         }
 
         document.body.removeChild(this.previewPlaceholder);
         this.previewPlaceholder = null;
-    },
+    };
 
-    renderMagnifier() {
+    renderMagnifier = () => {
         const smallImage = ReactDOM.findDOMNode(this).getBoundingClientRect();
         const { zoomImage, previewWidth, previewHeight } = this.props;
         const { x, y, zoomImageDimensions, isActive, isImageLoaded, isScrolling } = this.state;
@@ -235,7 +230,7 @@ export default React.createClass({
             />,
             this.previewPlaceholder
         );
-    },
+    };
 
     render() {
         const { smallImage, children } = this.props;
@@ -259,6 +254,4 @@ export default React.createClass({
             </div>
         );
     }
-});
-
-
+}

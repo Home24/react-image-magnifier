@@ -1,53 +1,83 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.default = void 0;
 
-var _react = require('react');
+var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _react2 = _interopRequireDefault(_react);
+var _react = _interopRequireDefault(require("react"));
 
-var _assign = require('lodash/assign');
-
-var _assign2 = _interopRequireDefault(_assign);
+var _assign = _interopRequireDefault(require("lodash/assign"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _react2.default.createClass({
-    displayName: 'lens',
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    propTypes: {
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-        // the size of the magnifier window
-        width: _react2.default.PropTypes.number.isRequired,
-        height: _react2.default.PropTypes.number.isRequired,
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-        // the position of the lens relative to the image
-        position: _react2.default.PropTypes.shape({
-            top: _react2.default.PropTypes.number.isRequired,
-            left: _react2.default.PropTypes.number.isRequired,
-            marginLeft: _react2.default.PropTypes.number,
-            marginTop: _react2.default.PropTypes.number
-        }).isRequired
-    },
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-    render: function render() {
-        var _props = this.props;
-        var width = _props.width;
-        var height = _props.height;
-        var position = _props.position;
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-        var styles = {
-            position: 'absolute',
-            border: '2px solid grey',
-            transform: 'translateZ(0)',
-            width: width,
-            height: height
-        };
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
-        return _react2.default.createElement('div', { style: (0, _assign2.default)(styles, position) });
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var _default =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(_default, _React$Component);
+
+  function _default() {
+    _classCallCheck(this, _default);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(_default).apply(this, arguments));
+  }
+
+  _createClass(_default, [{
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+          width = _this$props.width,
+          height = _this$props.height,
+          position = _this$props.position;
+      var styles = {
+        position: 'absolute',
+        border: '2px solid grey',
+        transform: 'translateZ(0)',
+        width: width,
+        height: height
+      };
+      return _react.default.createElement("div", {
+        style: (0, _assign.default)(styles, position)
+      });
     }
+  }]);
+
+  return _default;
+}(_react.default.Component);
+
+exports.default = _default;
+
+_defineProperty(_default, "propTypes", {
+  // the size of the magnifier window
+  width: _propTypes.default.number.isRequired,
+  height: _propTypes.default.number.isRequired,
+  // the position of the lens relative to the image
+  position: _propTypes.default.shape({
+    top: _propTypes.default.number.isRequired,
+    left: _propTypes.default.number.isRequired,
+    marginLeft: _propTypes.default.number,
+    marginTop: _propTypes.default.number
+  }).isRequired
 });
