@@ -82,3 +82,4 @@ $RECYCLE.BIN/
 .idea/react-image-magnifier.iml
 .idea/scopes/scope_settings.xml
 .idea/vcs.xml
+.vscode

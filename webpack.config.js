@@ -3,34 +3,32 @@ var webpack = require('webpack');
 
 module.exports = {
     devtool: 'source-map',
+    mode: 'production',
     entry: {
         'image-magnifier': path.join(__dirname, 'src/image-magnifier.js')
     },
     output: {
         path: path.join(__dirname, 'build'),
         publicPath: 'dist',
-        filename: '[name].min.js'
+        filename: '[name].min.js',
+        globalObject: 'this'
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.js?$/,
                 exclude: /node_modules/,
-                loader: 'babel?presets[]=react,presets[]=es2015'
+                loader: 'babel-loader?presets[]=@babel/preset-react,presets[]=@babel/preset-env'
             }
         ],
         noParse: /\.min\.js/
     },
     plugins: [
-        new webpack.NoErrorsPlugin(),
-        new webpack.optimize.OccurenceOrderPlugin(),
-        // optimizations
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        })
+        new webpack.NoEmitOnErrorsPlugin(),
+        new webpack.optimize.OccurrenceOrderPlugin(),
     ],
-    externals: ['react', 'react-dom']
+    optimization: {
+        minimize: true
+    },
+    externals: ['react', 'react-dom', 'prop-types', 'lodash']
 };

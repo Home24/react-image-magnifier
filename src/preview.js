@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default React.createClass({
-
-    propTypes: {
+export default class extends React.Component {
+    static propTypes = {
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,
 
@@ -29,7 +28,7 @@ export default React.createClass({
                 y: PropTypes.number
             })
         }).isRequired
-    },
+    };
 
     render() {
         const { width, height, position, smallImage, zoomImage } = this.props;
@@ -49,4 +48,4 @@ export default React.createClass({
 
         return <div style={previewStyles}/>;
     }
-});
+}

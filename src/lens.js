@@ -2,9 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import assign from 'lodash/assign';
 
-export default React.createClass({
-
-    propTypes: {
+export default class extends React.Component {
+    static propTypes = {
 
         // the size of the magnifier window
         width: PropTypes.number.isRequired,
@@ -17,7 +16,7 @@ export default React.createClass({
             marginLeft: PropTypes.number,
             marginTop: PropTypes.number
         }).isRequired
-    },
+    };
 
     render() {
         const { width, height, position } = this.props;
@@ -32,4 +31,4 @@ export default React.createClass({
 
         return <div style={assign(styles, position)} />;
     }
-});
+}

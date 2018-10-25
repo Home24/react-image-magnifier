@@ -1,73 +1,100 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.default = void 0;
 
-var _propTypes = require('prop-types');
+var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
+var _react = _interopRequireDefault(require("react"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _react2.default.createClass({
-    displayName: 'preview',
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    propTypes: {
-        width: _propTypes2.default.number.isRequired,
-        height: _propTypes2.default.number.isRequired,
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-        // the position of the preview
-        position: _propTypes2.default.shape({
-            bgVertical: _propTypes2.default.string.isRequired,
-            bgHorizontal: _propTypes2.default.string.isRequired
-        }).isRequired,
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-        // the size of the non-zoomed-in image
-        smallImage: _propTypes2.default.shape({
-            bottom: _propTypes2.default.number.isRequired,
-            left: _propTypes2.default.number.isRequired,
-            top: _propTypes2.default.number.isRequired,
-            right: _propTypes2.default.number.isRequired
-        }).isRequired,
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-        // the size of the zoomed-in image
-        zoomImage: _propTypes2.default.shape({
-            src: _propTypes2.default.string.isRequired,
-            offset: _propTypes2.default.shape({
-                x: _propTypes2.default.number,
-                y: _propTypes2.default.number
-            })
-        }).isRequired
-    },
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-    render: function render() {
-        var _props = this.props,
-            width = _props.width,
-            height = _props.height,
-            position = _props.position,
-            smallImage = _props.smallImage,
-            zoomImage = _props.zoomImage;
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
-        var previewStyles = {
-            position: 'fixed',
-            transform: 'translateZ(0)',
-            zIndex: '9999',
-            left: zoomImage.offset && zoomImage.offset.x ? smallImage.right + zoomImage.offset.x : smallImage.right,
-            top: zoomImage.offset && zoomImage.offset.y ? smallImage.top + zoomImage.offset.y : smallImage.top,
-            width: width,
-            height: height,
-            backgroundImage: 'url(' + zoomImage.src + ')',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: position.bgHorizontal + ' ' + position.bgVertical
-        };
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-        return _react2.default.createElement('div', { style: previewStyles });
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var _default =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(_default, _React$Component);
+
+  function _default() {
+    _classCallCheck(this, _default);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(_default).apply(this, arguments));
+  }
+
+  _createClass(_default, [{
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+          width = _this$props.width,
+          height = _this$props.height,
+          position = _this$props.position,
+          smallImage = _this$props.smallImage,
+          zoomImage = _this$props.zoomImage;
+      var previewStyles = {
+        position: 'fixed',
+        transform: 'translateZ(0)',
+        zIndex: '9999',
+        left: zoomImage.offset && zoomImage.offset.x ? smallImage.right + zoomImage.offset.x : smallImage.right,
+        top: zoomImage.offset && zoomImage.offset.y ? smallImage.top + zoomImage.offset.y : smallImage.top,
+        width: width,
+        height: height,
+        backgroundImage: "url(".concat(zoomImage.src, ")"),
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: "".concat(position.bgHorizontal, " ").concat(position.bgVertical)
+      };
+      return _react.default.createElement("div", {
+        style: previewStyles
+      });
     }
+  }]);
+
+  return _default;
+}(_react.default.Component);
+
+exports.default = _default;
+
+_defineProperty(_default, "propTypes", {
+  width: _propTypes.default.number.isRequired,
+  height: _propTypes.default.number.isRequired,
+  // the position of the preview
+  position: _propTypes.default.shape({
+    bgVertical: _propTypes.default.string.isRequired,
+    bgHorizontal: _propTypes.default.string.isRequired
+  }).isRequired,
+  // the size of the non-zoomed-in image
+  smallImage: _propTypes.default.shape({
+    bottom: _propTypes.default.number.isRequired,
+    left: _propTypes.default.number.isRequired,
+    top: _propTypes.default.number.isRequired,
+    right: _propTypes.default.number.isRequired
+  }).isRequired,
+  // the size of the zoomed-in image
+  zoomImage: _propTypes.default.shape({
+    src: _propTypes.default.string.isRequired,
+    offset: _propTypes.default.shape({
+      x: _propTypes.default.number,
+      y: _propTypes.default.number
+    })
+  }).isRequired
 });
